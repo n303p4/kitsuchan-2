@@ -2,6 +2,7 @@
 
 [![MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/n303p4/Kitsuchan-NG/blob/master/LICENSE.txt)
 [![Python](https://img.shields.io/badge/Python-3.6-brightgreen.svg)](https://python.org/)
+[![GPA](https://codeclimate.com/github/n303p4/kitsuchan-2a/badges/gpa.svg)](https://codeclimate.com/github/n303p4/kitsuchan-2a)
 
 **kitsuchan 2a** (or **k2a** for short) is a simple, modular Discord bot written in `discord.py`.
 It's actually based on the Discord bot in **[k3](https://github.com/ClaraIO/kitsuchan)**, and is
