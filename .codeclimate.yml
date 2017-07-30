@@ -1,0 +1,17 @@
+engines:
+  pep8:
+    enabled: true
+  duplication:
+    enabled: false
+    config:
+      languages:
+      - python
+  fixme:
+      enabled: true
+ratings:
+  paths:
+  - "**.py"
+exclude_paths:
+  ".pylintrc"
+  "docs/*"
+  README.md
