@@ -17,7 +17,7 @@ older.
 The bot should come with a sample configuration file called `config.example.json`. Rename it to
 `config.json` and fill it out accordingly. Then in a terminal, run:
 
-```py
+```bash
 python3 -m pip install -U git+https://github.com/Rapptz/discord.py@rewrite
 python3 kitsuchan.py
 ```
