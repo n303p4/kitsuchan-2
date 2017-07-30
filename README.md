@@ -6,8 +6,8 @@
 
 **kitsuchan 2a** (or **k2a** for short) is a simple, modular Discord bot written in `discord.py`.
 It's actually based on the Discord bot in **[k3](https://github.com/ClaraIO/kitsuchan)**, and is
-thus not closely related to previous generations of Kitsuchan. The objective was to simplify
-the bot's codebase.
+thus not closely related to previous generations of Kitsuchan. The objective was to reduce
+the bot's codebase, making it easier to work with.
 
 ## How to run k2a
 
