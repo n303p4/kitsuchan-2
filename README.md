@@ -38,7 +38,7 @@ currently) take advantage of.
 ## You're inconsistent with naming. Is there a particular way to spell this bot's name?
 
 Nope. I'm terrible at that stuff, so use whatever you will. It's not like I can stop you anyway.
-Kitsuchan 2, kitsuchan2, k2a, K2, Kaytoo, etc.
+Kitsuchan 2, kitsuchan2, k2, K2, Kaytoo, etc.
 
 ## License
 
