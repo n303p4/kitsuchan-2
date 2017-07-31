@@ -2,7 +2,7 @@
 
 [![MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/n303p4/Kitsuchan-NG/blob/master/LICENSE.txt)
 [![Python](https://img.shields.io/badge/Python-3.6-brightgreen.svg)](https://python.org/)
-[![GPA](https://codeclimate.com/github/n303p4/kitsuchan-2a/badges/gpa.svg)](https://codeclimate.com/github/n303p4/kitsuchan-2a)
+[![GPA](https://codeclimate.com/github/n303p4/kitsuchan-2/badges/gpa.svg)](https://codeclimate.com/github/n303p4/kitsuchan-2)
 
 **kitsuchan 2** (or **k2** for short) is a simple, modular Discord bot written in `discord.py`
 with a focus on high quality code. This is a continuation and significant overhaul of the bot
