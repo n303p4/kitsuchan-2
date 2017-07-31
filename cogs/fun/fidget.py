@@ -46,5 +46,5 @@ class Fidget:
 
 
 def setup(bot):
-    """Sets up the cog."""
+    """Set up the extension."""
     bot.add_cog(Fidget())

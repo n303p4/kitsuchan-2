@@ -8,6 +8,8 @@ import sys
 import discord
 from discord.ext import commands
 
+import k2
+
 
 class About:
     """Commands that display information about the bot, user, etc."""
@@ -21,6 +23,8 @@ class About:
         embed.description = ctx.bot.description
 
         embed.set_thumbnail(url=ctx.bot.user.avatar_url_as(format="png", size=128))
+
+        embed.add_field(name="Version", value=k2.version)
 
         ainfo = await ctx.bot.application_info()
         owner = str(ainfo.owner)
@@ -170,5 +174,5 @@ class About:
 
 
 def setup(bot):
-    """Setup function for About."""
+    """Set up the extension."""
     bot.add_cog(About())

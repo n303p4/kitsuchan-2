@@ -51,5 +51,5 @@ class Rhino:
 
 
 def setup(bot):
-    """Sets up the cog."""
+    """Set up the extension."""
     bot.add_cog(Rhino())
