@@ -18,7 +18,7 @@ logging.basicConfig(format=FORMAT)
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
 
-bot = core.Bot(command_prefix="", pm_help=True, config_file="config.json")
+bot = core.Bot(command_prefix="", pm_help=None, config_file="config.json")
 bot.description = k2.description
 
 
