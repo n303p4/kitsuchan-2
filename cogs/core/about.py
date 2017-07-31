@@ -45,6 +45,8 @@ class About:
         usage_memory = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000, 2)
         embed.add_field(name="Cookies eaten", value=f"{usage_memory} megabites")
 
+        embed.add_field(name="Github", value=k2.url, inline=False)
+
         await ctx.send(embed=embed)
 
     @commands.command(brief="Display guild (server) info.",

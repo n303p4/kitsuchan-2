@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-description = ("This is a running instance of Kitsuchan 2, a modular Discord bot "
-               "made with love and surprisingly little coffee.")
-version_info = (0, 8, 0, "a", "Swift")
+description = ("This is a running instance of Kitsuchan 2, an open-source, modular Discord bot "
+               "made with ♥ and surprisingly little ☕.")
+url = "https://github.com/n303p4/kitsuchan-2a"
+version_info = (2, 0, 0, "a", "Swift")
 version = '{0}.{1}.{2}{3} "{4}"'.format(*version_info)
