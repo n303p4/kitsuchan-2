@@ -10,6 +10,7 @@ import logging
 
 from discord.ext import commands
 
+import k2
 from k2 import core
 
 FORMAT = '%(asctime)-15s %(message)s'
@@ -18,6 +19,7 @@ logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
 
 bot = core.Bot(command_prefix="", pm_help=True, config_file="config.json")
+bot.description = k2.description
 
 
 class IsNotHuman(commands.CommandError):
