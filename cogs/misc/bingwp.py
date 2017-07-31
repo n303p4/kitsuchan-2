@@ -14,7 +14,7 @@ class Wallpapers:
     """Bing wallpaper command."""
 
     @commands.command(aliases=["bwp"])
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def bingwp(self, ctx):
         """Query Bing for a wallpaper."""
 

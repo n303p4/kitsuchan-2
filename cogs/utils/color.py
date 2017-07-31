@@ -32,7 +32,7 @@ class Color:
     """Color command."""
 
     @commands.command(aliases=["colour"])
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def color(self, ctx, *, color: str=None):
         """Display a color. Accepts CSS color names and hex input.
 

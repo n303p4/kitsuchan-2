@@ -50,7 +50,7 @@ class Extensions:
             ctx.bot.config["module_blacklist"].append(extension_name)
             ctx.bot.save_config()
             try:
-                ctx.bot.remove_module(extension_name)
+                ctx.bot.unload_extension(extension_name)
                 await ctx.send(f"Unloaded extension {extension_name}")
                 return
             except Exception as error:

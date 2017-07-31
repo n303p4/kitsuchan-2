@@ -10,7 +10,7 @@ class Discriminator:
 
     @commands.command(aliases=["discriminator"])
     @commands.guild_only()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def discrim(self, ctx, *, discriminator: str=None):
         """Find all users the bot can see with a given discriminator.
 

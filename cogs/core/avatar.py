@@ -10,7 +10,7 @@ class Avatar:
     """Avatar commands."""
 
     @commands.command()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def avatar(self, ctx, *, user: discord.Member=None):
         """Display a user's avatar.
         Defaults to displaying the avatar of the user who invoked the command.
@@ -21,7 +21,7 @@ class Avatar:
         await ctx.send(user.avatar_url)
 
     @commands.command(aliases=["gicon", "servericon", "sicon"])
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def guildicon(self, ctx):
         """Display the icon of the current guild."""
         await ctx.send(ctx.guild.icon_url)

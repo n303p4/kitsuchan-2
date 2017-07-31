@@ -10,7 +10,7 @@ class Invite:
     """Invite command."""
 
     @commands.command()
-    @commands.cooldown(1, 30, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def invite(self, ctx):
         """Generate an invite link for this bot."""
         invite_minimal = ("[Minimal invite](https://discordapp.com/oauth2/authorize?"

@@ -13,7 +13,7 @@ class About:
     """Commands that display information about the bot, user, etc."""
 
     @commands.command(aliases=["botinfo", "binfo", "about", "stats"])
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def info(self, ctx):
         """Display bot info, e.g. library versions."""
 
@@ -46,7 +46,7 @@ class About:
     @commands.command(brief="Display guild (server) info.",
                       aliases=["guild", "ginfo", "server", "serverinfo", "sinfo"])
     @commands.guild_only()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def guildinfo(self, ctx):
         """Display information about the current guild, such as owner, region, emojis, and roles."""
 
@@ -72,7 +72,7 @@ class About:
 
     @commands.command(brief="Display channel info.", aliases=["channel", "cinfo"])
     @commands.guild_only()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def channelinfo(self, ctx, *, channel: discord.TextChannel=None):
         """Display information about a text channel.
         Defaults to the current channel.
@@ -107,7 +107,7 @@ class About:
     @commands.command(brief="Display voice channel info.",
                       aliases=["voicechannel", "vchannel", "vcinfo"])
     @commands.guild_only()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def vchannelinfo(self, ctx, *, channel: discord.VoiceChannel):
         """Display information about a voice channel.
 
@@ -130,7 +130,7 @@ class About:
 
     @commands.command(brief="Display user info.", aliases=["user", "uinfo"])
     @commands.guild_only()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def userinfo(self, ctx, *, user: discord.Member=None):
         """Display information about a user, such as status and roles.
         Defaults to the user who invoked the command.

@@ -15,19 +15,12 @@ file_handler.setLevel(logging.INFO)
 logger.addHandler(file_handler)
 
 
-class CommandLog:
-    """This cog contains no commands."""
-
-    def __init__(self, bot):
-
-        @bot.listen("on_command")
-        async def log_command(ctx):
-            message = (f"{ctx.message.content} | "
-                       f"{ctx.author.name}:{ctx.author.id} in {ctx.guild.name}:{ctx.guild.id}")
-            logger.info(message)
-            message = f"{ctx.message.created_at.ctime()}: {message}"
-
-
 def setup(bot):
-    """Sets up the cog."""
-    bot.add_cog(CommandLog(bot))
+    """Sets up the extension."""
+
+    @bot.listen("on_command")
+    async def log_command(ctx):
+        message = (f"{ctx.message.content} | "
+                   f"{ctx.author.name}:{ctx.author.id} in {ctx.guild.name}:{ctx.guild.id}")
+        logger.info(message)
+        message = f"{ctx.message.created_at.ctime()}: {message}"

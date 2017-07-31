@@ -29,7 +29,7 @@ class Fidget:
     """Fidget spinner command."""
 
     @commands.command(aliases=["fidget", "spin"])
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     @commands.check(is_not_spinning)
     async def spinner(self, ctx):
         """Spin a fidget spinner."""

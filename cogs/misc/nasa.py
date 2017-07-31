@@ -14,7 +14,7 @@ class NASA:
     """NASA image commands."""
 
     @commands.command()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def iotd(self, ctx):
         """Fetch NASA's Image of the Day."""
 
@@ -31,7 +31,7 @@ class NASA:
                 await ctx.send(message)
 
     @commands.command()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
+    @commands.cooldown(6, 12)
     async def apod(self, ctx):
         """Fetch NASA's Astronomy Picture of the Day."""
 
