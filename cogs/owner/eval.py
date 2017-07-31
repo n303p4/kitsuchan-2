@@ -45,8 +45,8 @@ class Evaluation:
         paginator = commands.Paginator(prefix="```py", max_size=500)
         for index in range(0, len(output), 490):
             paginator.add_line(output[index:index+490])
-        message = await ctx.send(paginator.pages[0])
-        await ctx.bot.add_pager(message, paginator.pages, author_id=ctx.author.id)
+        for page in paginator.pages:
+            await ctx.send(page)
 
     @commands.group(name="eval", invoke_without_command=True)
     @commands.is_owner()
