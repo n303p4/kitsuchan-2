@@ -6,6 +6,7 @@ import random
 import urllib.parse
 
 import aiohttp
+import discord
 from discord.ext import commands
 import html2text
 from bs4 import BeautifulSoup
@@ -49,68 +50,73 @@ async def _mal_fetch(session, kind, query, username, password):
         return message
 
 
-def _handle_anime(formatter, entry):
-    message = [
-        formatter.bold(entry.title.string),
-        formatter.no_embed_link(BASE_URL_MYANIMELIST.format("anime", entry.id.string)),
-        formatter.bold("ID: ") + entry.id.string,
-        formatter.bold("Synonyms: ") + entry.synonyms.string,
-        formatter.bold("Episodes: ") + entry.synonyms.string,
-        formatter.bold("Score: ") + entry.score.string,
-        formatter.bold("Type: ") + entry.type.string,
-        formatter.bold("Status: ") + entry.status.string,
-        formatter.bold("Start date: ") + entry.start_date.string,
-        formatter.bold("End date: ") + entry.end_date.string,
-        html2text.html2text(entry.synopsis.string)
-    ]
-    return "\n".join(message)
+def _handle_anime(entry):
+    embed = discord.Embed(title=entry.title.string)
+    embed.url = BASE_URL_MYANIMELIST.format("anime", entry.id.string)
+    embed.add_field(name="ID", value=entry.id.string)
+    embed.add_field(name="Synonyms", value=entry.synonyms.string)
+    embed.add_field(name="Episodes", value=entry.episodes.string)
+    embed.add_field(name="Score", value=entry.score.string)
+    embed.add_field(name="Type", value=entry.type.string)
+    embed.add_field(name="Status", value=entry.status.string)
+    embed.add_field(name="Start date", value=entry.start_date.string)
+    embed.add_field(name="End date", value=entry.end_date.string)
+    embed.description = html2text.html2text(entry.synopsis.string)
+    return embed
 
 
-def _handle_manga(formatter, entry):
-    message = [
-        formatter.bold(entry.title.string),
-        formatter.no_embed_link(BASE_URL_MYANIMELIST.format("manga", entry.id.string)),
-        formatter.bold("ID: ") + entry.id.string,
-        formatter.bold("Synonyms: ") + entry.synonyms.string,
-        formatter.bold("Chapters: ") + entry.chapters.string,
-        formatter.bold("Volumes: ") + entry.volumes.string,
-        formatter.bold("Score: ") + entry.score.string,
-        formatter.bold("Type: ") + entry.type.string,
-        formatter.bold("Status: ") + entry.status.string,
-        formatter.bold("Start date: ") + entry.start_date.string,
-        formatter.bold("End date: ") + entry.end_date.string,
-        html2text.html2text(entry.synopsis.string)
-    ]
-    return "\n".join(message)
+def _handle_manga(entry):
+    embed = discord.Embed(title=entry.title.string)
+    embed.url = BASE_URL_MYANIMELIST.format("manga", entry.id.string)
+    embed.add_field(name="ID", value=entry.id.string)
+    embed.add_field(name="Synonyms", value=entry.synonyms.string)
+    embed.add_field(name="Chapters", value=entry.chapters.string)
+    embed.add_field(name="Volumes", value=entry.volumes.string)
+    embed.add_field(name="Score", value=entry.score.string)
+    embed.add_field(name="Type", value=entry.type.string)
+    embed.add_field(name="Status", value=entry.status.string)
+    embed.add_field(name="Start date", value=entry.start_date.string)
+    embed.add_field(name="End date", value=entry.end_date.string)
+    embed.description = html2text.html2text(entry.synopsis.string)
+    return embed
 
 
-@commands.cooldown(6, 12)
-@commands.command()
-async def manga(ctx, query, *args):
-    """Search for manga."""
-    query += " ".join(args)
-    username = ctx.bot.config.get("myanimelist_username")
-    password = ctx.bot.config.get("myanimelist_password")
-    if not username or not password:
-        await ctx.send("No username and/or password was found in the configuration.")
-        return
-    result = await _mal_fetch(ctx.bot.session, "manga", query, username, password)
-    if not isinstance(result, str):
-        result = _handle_manga(ctx.formatter, result)
-    await ctx.send(result)
+class MyAnimeList:
+    """MyAnimeList lookup commands."""
+
+    @commands.command()
+    @commands.cooldown(6, 12)
+    async def manga(self, ctx, *, query):
+        """Search for manga."""
+        username = ctx.bot.config.get("myanimelist_username")
+        password = ctx.bot.config.get("myanimelist_password")
+        if not username or not password:
+            await ctx.send("No username and/or password was found in the configuration.")
+            return
+        result = await _mal_fetch(ctx.bot.session, "manga", query, username, password)
+        if not isinstance(result, str):
+            embed = _handle_manga(result)
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send(result)
+
+    @commands.command()
+    @commands.cooldown(6, 12)
+    async def anime(self, ctx, *, query):
+        """Search for anime."""
+        username = ctx.bot.config.get("myanimelist_username")
+        password = ctx.bot.config.get("myanimelist_password")
+        if not username or not password:
+            await ctx.send("No username and/or password was found in the configuration.")
+            return
+        result = await _mal_fetch(ctx.bot.session, "anime", query, username, password)
+        if not isinstance(result, str):
+            embed = _handle_anime(result)
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send(result)
 
 
-@commands.cooldown(6, 12)
-@commands.command()
-async def anime(ctx, query, *args):
-    """Search for anime."""
-    query += " ".join(args)
-    username = ctx.bot.config.get("myanimelist_username")
-    password = ctx.bot.config.get("myanimelist_password")
-    if not username or not password:
-        await ctx.send("No username and/or password was found in the configuration.")
-        return
-    result = await _mal_fetch(ctx.bot.session, "anime", query, username, password)
-    if not isinstance(result, str):
-        result = _handle_anime(ctx.formatter, result)
-    await ctx.send(result)
+def setup(bot):
+    """Set up the extension."""
+    bot.add_cog(MyAnimeList())
