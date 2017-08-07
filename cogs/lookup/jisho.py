@@ -4,6 +4,7 @@
 
 import urllib.parse
 
+import discord
 from discord.ext import commands
 
 BASE_URL_JISHO_API = "http://jisho.org/api/v1/search/words?{0}"
@@ -33,12 +34,13 @@ class Jisho:
                 japanese = data["data"][0]["japanese"][0]
                 sense = data["data"][0]["senses"][0]
                 english_string = ", ".join(sense["english_definitions"])
-                message = [
-                    "Kanji: " + str(japanese.get("word")),
-                    "Kana: " + str(japanese.get("reading")),
-                    "English: " + english_string
-                ]
-                await ctx.send("\n".join(message))
+
+                embed = discord.Embed()
+                embed.add_field(name="Kanji", value=str(japanese.get("word")))
+                embed.add_field(name="Kana", value=str(japanese.get("reading")))
+                embed.add_field(name="English", value=english_string)
+                await ctx.send(embed=embed)
+
             else:
                 await ctx.send("Couldn't reach Jisho.org. x.x")
 
