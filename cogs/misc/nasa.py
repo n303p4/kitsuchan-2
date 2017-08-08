@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 
-import random
-
 from discord.ext import commands
 
 BASE_URL_NASA_IOTD = "https://api.pandentia.cf/nasa/iotd"
 BASE_URL_NASA_APOD = "https://api.pandentia.cf/nasa/apod"
-
-systemrandom = random.SystemRandom()
 
 
 class NASA:
