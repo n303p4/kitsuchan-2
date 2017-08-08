@@ -22,25 +22,6 @@ bot = core.Bot(command_prefix="", pm_help=None, config_file="config.json")
 bot.description = k2.description
 
 
-class IsNotHuman(commands.CommandError):
-    """Raised if a bot attempts to invoke one of this bot's commands."""
-    pass
-
-
-@bot.check
-def is_human(ctx):
-    """Prevent the bot from responding to other bots."""
-    if ctx.author.bot:
-        raise IsNotHuman("User is not human")
-    return True
-
-
-@bot.listen("on_command_error")
-async def handle_error(ctx, exc):
-    """Simple error handler."""
-    if not isinstance(exc, (commands.CommandNotFound, IsNotHuman)):
-        await ctx.send(exc)
-
 if __name__ == "__main__":
     bot.load_config()
 
