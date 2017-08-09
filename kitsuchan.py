@@ -19,7 +19,6 @@ logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
 
 bot = core.Bot(command_prefix="", pm_help=None, config_file="config.json")
-bot.description = k2.description
 
 
 if __name__ == "__main__":
@@ -27,6 +26,8 @@ if __name__ == "__main__":
 
     assert (isinstance(bot.config.get("discord_token"), str)), "Bot token not valid."
     assert (isinstance(bot.config.get("module_blacklist", []), list)), "Blacklist must be a list."
+
+    bot.description = bot.config.get("description", k2.description)
 
     prefix = bot.config.get("prefix", "k2")
     prefixes = [f"{prefix} ", prefix]
