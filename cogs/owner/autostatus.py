@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-"""
-This extension sets the bot's playing status.
-"""
+"""This extension sets the bot's playing status."""
 
 import discord
 
