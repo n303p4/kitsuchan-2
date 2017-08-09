@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-"""This extension sets the bot's playing status."""
+"""
+This extension sets the bot's playing status.
+"""
 
 import discord
 
@@ -13,6 +15,6 @@ def setup(bot):
         """Conduct preparations once the bot is ready to go."""
 
         game = discord.Game()
-        game.name = f"@{bot.user.name} help for help!"
+        game.name = f"Type {bot.config.get('prefix', f'@{bot.user.name}')} help for help!"
 
         await bot.change_presence(game=game)
