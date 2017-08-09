@@ -2,7 +2,6 @@
 
 """MyAnimeList commands."""
 
-import random
 import urllib.parse
 
 import aiohttp
@@ -10,8 +9,6 @@ import discord
 from discord.ext import commands
 import html2text
 from bs4 import BeautifulSoup
-
-systemrandom = random.SystemRandom()
 
 BASE_URL_MYANIMELIST_SEARCH = "https://myanimelist.net/api/{0}/search.xml?q={1}"
 BASE_URL_MYANIMELIST = "https://myanimelist.net/{0}/{1}"

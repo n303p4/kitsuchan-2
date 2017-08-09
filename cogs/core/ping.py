@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
 import datetime
-import random
 
 from discord.ext import commands
-
-systemrandom = random.SystemRandom()
 
 
 class Ping:
@@ -22,5 +19,5 @@ class Ping:
 
 
 def setup(bot):
-    """Sets up the cog."""
+    """Set up the extension."""
     bot.add_cog(Ping())

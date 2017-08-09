@@ -2,11 +2,7 @@
 
 """Moderation extension."""
 
-import random
-
 from discord.ext import commands
-
-systemrandom = random.SystemRandom()
 
 STATUS_INDICATORS = {"online": ":green_heart:",
                      "idle": ":yellow_heart:",

@@ -8,7 +8,10 @@ import sys
 import discord
 from discord.ext import commands
 
-import k2
+try:  # This allows the extension to be used in other bots.
+    import k2
+except ImportError:
+    k2 = False
 
 
 class About:
@@ -24,7 +27,8 @@ class About:
 
         embed.set_thumbnail(url=ctx.bot.user.avatar_url_as(format="png", size=128))
 
-        embed.add_field(name="Version", value=k2.version)
+        if k2:
+            embed.add_field(name="Version", value=k2.version)
 
         ainfo = await ctx.bot.application_info()
         owner = str(ainfo.owner)
@@ -45,7 +49,8 @@ class About:
         usage_memory = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000, 2)
         embed.add_field(name="Cookies eaten", value=f"{usage_memory} megabites")
 
-        embed.add_field(name="Github", value=k2.url, inline=False)
+        if k2:
+            embed.add_field(name="Github", value=k2.url, inline=False)
 
         await ctx.send(embed=embed)
 

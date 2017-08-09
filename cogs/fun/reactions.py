@@ -8,7 +8,7 @@ import random
 import discord
 from discord.ext import commands
 
-SYSTEMRANDOM = random.SystemRandom()
+systemrandom = random.SystemRandom()
 
 BASE_URL_API = "https://rra.ram.moe/i/r?type={0}"
 BASE_URL_IMAGE = "https://cdn.ram.moe{0[path]}"
@@ -24,7 +24,7 @@ async def _generate_message(ctx, kind: str=None, user: discord.User=None):
     elif user.id == ctx.bot.user.id:
         message = f"Aw, thank you. Here, have one back. :3"
     elif user.id == ctx.author.id:
-        message = SYSTEMRANDOM.choice(("Okay. :3",
+        message = systemrandom.choice(("Okay. :3",
                                        f"Sorry to see you're alone, have a {kind} anyway. :<",
                                        f"I'll {kind} your face alright. :3",
                                        ":<"))
@@ -36,7 +36,7 @@ async def _generate_message(ctx, kind: str=None, user: discord.User=None):
 async def _send_image(ctx, url_image, message: str=""):
     """A helper function that creates an embed with an image and sends it off."""
     if isinstance(url_image, (tuple, list)):
-        url_image = SYSTEMRANDOM.choice(url_image)
+        url_image = systemrandom.choice(url_image)
     embed = discord.Embed()
     embed.description = message
     embed.set_image(url=url_image)
@@ -117,7 +117,7 @@ class Reactions:
         elif is_owner:
             await ctx.send("I refuse. :<")
         else:
-            emoji = SYSTEMRANDOM.choice(EMOJIS_KILL)
+            emoji = systemrandom.choice(EMOJIS_KILL)
             await ctx.send((f"**{user.display_name}** was killed via {emoji}!"))
 
 

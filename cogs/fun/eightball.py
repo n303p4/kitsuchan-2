@@ -6,7 +6,7 @@ import random
 
 from discord.ext import commands
 
-SYSTEMRANDOM = random.SystemRandom()
+systemrandom = random.SystemRandom()
 
 ANSWERS = [
     # Stock replies.
@@ -63,9 +63,9 @@ class Eightball:
 
     @commands.command(name="8ball", aliases=["eightball"])
     @commands.cooldown(6, 12)
-    async def _eightball(ctx):
+    async def _eightball(self, ctx):
         """Ask the Magic 8-Ball a question."""
-        choice = SYSTEMRANDOM.choice(ANSWERS)
+        choice = systemrandom.choice(ANSWERS)
         await ctx.send(choice)
 
 

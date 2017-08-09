@@ -28,5 +28,5 @@ class Avatar:
 
 
 def setup(bot):
-    """Setup function."""
+    """Set up the extension."""
     bot.add_cog(Avatar())

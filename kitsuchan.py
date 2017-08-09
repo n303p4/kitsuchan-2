@@ -13,7 +13,7 @@ from discord.ext import commands
 import k2
 from k2 import core
 
-FORMAT = '%(asctime)-15s %(message)s'
+FORMAT = "%(asctime)-15s %(message)s"
 logging.basicConfig(format=FORMAT)
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)

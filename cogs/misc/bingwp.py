@@ -7,7 +7,7 @@ from discord.ext import commands
 BASE_URL_BING_API = "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n={0}&mkt=en-US"
 BASE_URL_BING = "https://www.bing.com{0}"
 
-SYSTEMRANDOM = random.SystemRandom()
+systemrandom = random.SystemRandom()
 
 
 class Wallpapers:
@@ -23,7 +23,7 @@ class Wallpapers:
         async with ctx.bot.session.get(url) as response:
             if response.status == 200:
                 data = await response.json()
-                image = SYSTEMRANDOM.choice(data["images"])
+                image = systemrandom.choice(data["images"])
                 url = BASE_URL_BING.format(image["url"])
                 await ctx.send(url)
             else:
