@@ -53,7 +53,8 @@ def _process_post(post, base_url_post: str, max_length_tags: int=MAX_LENGTH_TAGS
     else:
         sample_url = f"https:{post['sample_url']}"
     post_url = base_url_post.format(post["id"])
-    embed = discord.Embed(title=post_url)
+    embed = discord.Embed(title=post["id"])
+    embed.url = post_url
     embed.add_field(name="Full-size image", value=f"https:{post['file_url']}")
     embed.set_image(url=sample_url)
     embed.set_footer(text=post["tags"][:max_length_tags])
@@ -65,10 +66,9 @@ class Booru:
 
     @commands.command(aliases=["meido"])
     @commands.cooldown(6, 12)
-    async def maid(self, ctx, *, tags):
+    async def maid(self, ctx, *, set_of_tags=""):
         """Find a random maid. Optional tags."""
-        tags = " ".join(tags)
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f"maid {tags}")
+        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f"maid {set_of_tags}")
         if isinstance(result, str):
             await ctx.send(result)
         else:
@@ -77,10 +77,9 @@ class Booru:
 
     @commands.command(aliases=["animememe"])
     @commands.cooldown(6, 12)
-    async def animeme(self, ctx, *, tags):
+    async def animeme(self, ctx, *, set_of_tags=""):
         """Find a random anime meme. Optional tags."""
-        tags = " ".join(tags)
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f"meme {tags}")
+        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f"meme {set_of_tags}")
         if isinstance(result, str):
             await ctx.send(result)
         else:
@@ -89,10 +88,9 @@ class Booru:
 
     @commands.command(name=":<")
     @commands.cooldown(6, 12)
-    async def colonlessthan(self, ctx, *, tags):
+    async def colonlessthan(self, ctx, *, set_of_tags=""):
         """:<"""
-        tags = " ".join(tags)
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f":< {tags}")
+        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f":< {set_of_tags}")
         if isinstance(result, str):
             await ctx.send(result)
         else:
@@ -101,7 +99,7 @@ class Booru:
 
     @commands.command(aliases=["sbooru", "sb"])
     @commands.cooldown(6, 12)
-    async def safebooru(self, ctx, *, tags):
+    async def safebooru(self, ctx, *, set_of_tags=""):
         """Fetch a random image from Safebooru. Tags accepted.
 
         * tags - A list of tags to be used in the search criteria.
@@ -109,7 +107,7 @@ class Booru:
         This command accepts common imageboard tags and keywords.
         See http://safebooru.org/index.php?page=help&topic=cheatsheet for more details.
         """
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], tags)
+        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], set_of_tags)
         if isinstance(result, str):
             await ctx.send(result)
         else:

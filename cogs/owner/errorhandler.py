@@ -23,5 +23,8 @@ def setup(bot):
     @bot.listen("on_command_error")
     async def handle_error(ctx, exc):
         """Simple error handler."""
-        if not isinstance(exc, (commands.CommandNotFound, IsNotHuman)):
+        if isinstance(exc, commands.MissingRequiredArgument):
+            param = exc.param.replace("_", " ")
+            await ctx.send(f"Please specify a {param} for this command to work.")
+        elif not isinstance(exc, (commands.CommandNotFound, IsNotHuman)):
             await ctx.send(exc)
