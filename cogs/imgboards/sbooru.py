@@ -66,9 +66,9 @@ class Booru:
 
     @commands.command(aliases=["meido"])
     @commands.cooldown(6, 12)
-    async def maid(self, ctx, *, set_of_tags=""):
+    async def maid(self, ctx, *, tags=""):
         """Find a random maid. Optional tags."""
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f"maid {set_of_tags}")
+        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f"maid {tags}")
         if isinstance(result, str):
             await ctx.send(result)
         else:
@@ -77,9 +77,9 @@ class Booru:
 
     @commands.command(aliases=["animememe"])
     @commands.cooldown(6, 12)
-    async def animeme(self, ctx, *, set_of_tags=""):
+    async def animeme(self, ctx, *, tags=""):
         """Find a random anime meme. Optional tags."""
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f"meme {set_of_tags}")
+        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f"meme {tags}")
         if isinstance(result, str):
             await ctx.send(result)
         else:
@@ -88,9 +88,9 @@ class Booru:
 
     @commands.command(name=":<")
     @commands.cooldown(6, 12)
-    async def colonlessthan(self, ctx, *, set_of_tags=""):
+    async def colonlessthan(self, ctx, *, tags=""):
         """:<"""
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f":< {set_of_tags}")
+        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f":< {tags}")
         if isinstance(result, str):
             await ctx.send(result)
         else:
@@ -99,7 +99,7 @@ class Booru:
 
     @commands.command(aliases=["sbooru", "sb"])
     @commands.cooldown(6, 12)
-    async def safebooru(self, ctx, *, set_of_tags=""):
+    async def safebooru(self, ctx, *, tags=""):
         """Fetch a random image from Safebooru. Tags accepted.
 
         * tags - A list of tags to be used in the search criteria.
@@ -107,7 +107,7 @@ class Booru:
         This command accepts common imageboard tags and keywords.
         See http://safebooru.org/index.php?page=help&topic=cheatsheet for more details.
         """
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], set_of_tags)
+        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], tags)
         if isinstance(result, str):
             await ctx.send(result)
         else:
