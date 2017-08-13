@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# TODO Audit this and clean it up.
+
 """Contains a cog for various weeb reaction commands."""
 
 import json
