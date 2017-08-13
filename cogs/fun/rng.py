@@ -167,6 +167,7 @@ class Random:
                             f"{MAX_ROLL_SIZE} dice, and dice cannot have "
                             f"more than {MAX_DIE_SIZE} sides."))
 
+
 def setup(bot):
     """Set up the extension."""
     bot.add_cog(Random())
