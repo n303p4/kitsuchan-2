@@ -39,7 +39,7 @@ class Qwant:
                     return
                 item = systemrandom.choice(data["data"]["result"]["items"])
                 embed = discord.Embed(title=html.unescape(item["title"]))
-                embed.add_field(name="Original page", value=item["url"])
+                embed.description = item["url"]
                 embed.set_image(url=item["media"])
                 await ctx.send(embed=embed)
             else:
