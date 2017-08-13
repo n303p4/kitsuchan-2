@@ -18,6 +18,7 @@ class LookAtMe:
         
         if not token:
             await ctx.send("No token specified in the config.")
+            return
 
         url = BASE_URL_DBOTS_API.format(ctx.bot.user.id)
         
