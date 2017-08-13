@@ -55,6 +55,9 @@ class Dictionary:
                         description = f"{description}\nExample: {example}"
                     embed.add_field(name=result["type"], value=description)
 
+                embed.set_footer(text=("Powered by OwlBot | "
+                                       f"Showing {results_to_display} of {len(data)} results."))
+
                 await ctx.send(embed=embed)
             else:
                 message = "Connection failed, or that isn't a word. :<"

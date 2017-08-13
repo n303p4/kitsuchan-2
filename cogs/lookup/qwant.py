@@ -41,6 +41,7 @@ class Qwant:
                 embed = discord.Embed(title=html.unescape(item["title"]))
                 embed.description = item["url"]
                 embed.set_image(url=item["media"])
+                embed.set_footer(text="Powered by Qwant")
                 await ctx.send(embed=embed)
             else:
                 message = "Couldn't reach Qwant. x.x"
