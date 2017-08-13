@@ -15,17 +15,17 @@ class LookAtMe:
     async def lookatme(self, ctx):
         """Update the bot's server count on bots.discord.pw. Bot owner only."""
         token = ctx.bot.config.get("dbots_token", None)
-        
+
         if not token:
             await ctx.send("No token specified in the config.")
             return
 
         url = BASE_URL_DBOTS_API.format(ctx.bot.user.id)
-        
+
         data = {"server_count": len(ctx.bot.guilds), "shard_id": ctx.bot.shard_id,
                 "shard_count": ctx.bot.shard_count}
         headers = {"Authorization": token}
-        
+
         async with ctx.bot.session.request("POST", url, json=data, headers=headers) as response:
             if response.status <= 210:
                 await ctx.send("POSTing OK.")
