@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""This cog contains a Wikipedia query command."""
+"""This cog contains an image query command."""
 
 import html
 import random
@@ -43,7 +43,6 @@ class Qwant:
                 embed.set_image(url=item["media"])
                 await ctx.send(embed=embed)
             else:
-                print(response.status)
                 message = "Couldn't reach Qwant. x.x"
                 await ctx.send(message)
 
