@@ -34,4 +34,4 @@ class LookAtMe:
 
 def setup(bot):
     """Set up the extension."""
-    bot.add_cog(LookAtMe(bot))
+    bot.add_cog(LookAtMe())
