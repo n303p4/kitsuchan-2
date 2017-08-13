@@ -14,11 +14,11 @@ class Wikipedia:
     """Wikipedia command."""
 
     @commands.command(aliases=["wikipedia"])
-    @commands.cooldown(6, 12, commands.BucketType.user)
+    @commands.cooldown(6, 12)
     async def wiki(self, ctx, *, query: str):
         """Search Wikipedia.
 
-        * query - A list of strings to be used in the search criteria.
+        * query - A string to be used in the search criteria.
         """
         params = urllib.parse.urlencode({"action": "opensearch", "search": query})
         url = BASE_URL_WIKIPEDIA_API.format(params)
