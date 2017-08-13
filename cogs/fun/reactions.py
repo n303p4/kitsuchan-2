@@ -17,9 +17,9 @@ EMOJIS_KILL = (":gun:", ":knife:", ":eggplant:", ":bear:", ":fox:", ":wolf:", ":
                ":broken_heart:", ":crossed_swords:", ":fire:")
 
 
-async def _generate_message(ctx, kind: str=None, user: discord.User=None):
+async def _generate_message(ctx, kind: str=None, user: discord.Member=None):
     """Generate a message based on the user."""
-    if not kind:
+    if not kind or not user:
         message = ""
     elif user.id == ctx.bot.user.id:
         message = f"Aw, thank you. Here, have one back. :3"
@@ -80,7 +80,7 @@ class Reactions:
             elif not message_indicator:
                 helptext = f"{key.capitalize()} a user!"
 
-                async def callback(self, ctx, *, user: str):
+                async def callback(self, ctx, *, user: discord.Member):
                     message = await _generate_message(ctx, ctx.command.name, user)
                     await _send_image(ctx, self.data[ctx.command.name]["images"], message)
 
@@ -109,8 +109,6 @@ class Reactions:
         """Kill a user!
 
         * user - The user to kill."""
-        if not user:
-            raise commands.CommandError("Member not found.")
         is_owner = await ctx.bot.is_owner(user)
         if user.id == ctx.bot.user.id:
             await ctx.send("Kon kon, I'm invincible! :3")
