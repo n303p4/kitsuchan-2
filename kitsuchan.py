@@ -30,7 +30,12 @@ if __name__ == "__main__":
     bot.description = bot.config.get("description", k2.description)
 
     prefix = bot.config.get("prefix", "k2")
-    prefixes = [f"{prefix} ", prefix]
+    prefixes = [
+        f"{prefix} ",
+        f"{prefix} ".capitalize(),
+        prefix,
+        prefix.capitalize()
+    ]
     bot.command_prefix = commands.when_mentioned_or(*prefixes)
 
     blacklist = bot.config.get("module_blacklist", [])
