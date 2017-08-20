@@ -14,7 +14,8 @@ class Help:
         * command_or_cog - The name of a command or cog.
         """
         if not cmds:
-            help_text = f'```{", ".join(sorted(c.name for c in list(ctx.bot.commands)))}```'
+            commands_list = sorted(c.name for c in list(ctx.bot.commands) if not c.hidden)
+            help_text = f'```{", ".join(commands_list)}```'
             help_text += f"\nRun **help command** for more details on a command."
             help_text = "**List of commands:**\n" + help_text
             await ctx.send(help_text)
