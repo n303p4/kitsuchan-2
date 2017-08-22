@@ -2,10 +2,10 @@
 
 # TODO Audit this code later for cleanup.
 
-import asyncio
 import html
 import random
 
+import asyncio
 import discord
 from discord.ext import commands
 
