@@ -55,7 +55,7 @@ def _process_post(post, base_url_post: str, max_length_tags: int=MAX_LENGTH_TAGS
     post_url = base_url_post.format(post["id"])
     embed = discord.Embed(title=post["id"])
     embed.url = post_url
-    embed.add_field(name="Full-size image", value=f"https:{post['file_url']}")
+    embed.description = f"[Full-size image](https:{post['file_url']})"
     embed.set_image(url=sample_url)
     embed.set_footer(text=post["tags"][:max_length_tags])
     return embed
