@@ -22,6 +22,6 @@ def setup(bot):
     @bot.listen("on_command")
     async def log_command(ctx):
         message = (f"{ctx.message.content} | "
-                   f"{ctx.author.name}:{ctx.author.id} in {ctx.guild.name}:{ctx.guild.id}")
+                   f"{ctx.author.id} in {ctx.guild.name}:{ctx.guild.id}")
         logger.info(message)
         message = f"{ctx.message.created_at.ctime()}: {message}"
