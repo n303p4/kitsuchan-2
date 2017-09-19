@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=C0103
 
 description = ("This is a running instance of Kitsuchan 2, an open-source, modular Discord bot "
                "made with ♥ and surprisingly little ☕.")

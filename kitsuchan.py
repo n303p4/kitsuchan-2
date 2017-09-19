@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=C0103
 
 """A minimal Discord bot made using discord.ext.commands.
 

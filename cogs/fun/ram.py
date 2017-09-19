@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=C0103
 
 """Contains a cog for various weeb reaction commands."""
 

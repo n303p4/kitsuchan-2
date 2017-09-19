@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=C0103
 
 """Commands that invoke random things. Coin flips, dice rolls, kemonomimi... wait."""
 
