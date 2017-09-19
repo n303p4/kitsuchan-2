@@ -40,7 +40,7 @@ class About:
             embed.add_field(name="Shard", value=f"{ctx.guild.shard_id+1} of {ctx.bot.shard_count}")
 
         num_guilds = len(ctx.bot.guilds)
-        num_users = len(list(filter(lambda member: not member.bot, ctx.bot.get_all_members())))
+        num_users = sum(not member.bot for member in ctx.bot.get_all_members())
         embed.add_field(name="Serving", value=f"{num_users} people in {num_guilds} guilds")
 
         embed.add_field(name="Python", value="{0}.{1}.{2}".format(*sys.version_info))
