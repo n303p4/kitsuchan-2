@@ -7,8 +7,8 @@ import asyncio
 import discord
 from discord.ext import commands
 
-MEMBERCONVERTER = commands.MemberConverter()
-ROLECONVERTER = commands.RoleConverter()
+memberconverter = commands.MemberConverter()
+roleconverter = commands.RoleConverter()
 
 
 async def yes_no(ctx: commands.Context,
@@ -77,7 +77,7 @@ def is_moderator(ctx: commands.Context, member: discord.Member):
 async def member_by_substring(ctx: commands.Context, substring: str):
     """This searches for a member by substrings."""
     try:
-        return await MEMBERCONVERTER.convert(ctx, substring)
+        return await memberconverter.convert(ctx, substring)
     except commands.CommandError:
         pass
     substring = substring.lower()
@@ -90,7 +90,7 @@ async def member_by_substring(ctx: commands.Context, substring: str):
 async def role_by_substring(ctx: commands.Context, substring: str):
     """This searches for a role by substrings."""
     try:
-        return await ROLECONVERTER.convert(ctx, substring)
+        return await roleconverter.convert(ctx, substring)
     except commands.CommandError:
         pass
     substring = substring.lower()
