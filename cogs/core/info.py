@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Additional informational commands for k2."""
+
 import discord
 from discord.ext import commands
 
@@ -7,7 +9,7 @@ from k2 import helpers
 
 
 class Information:
-    """Other informational commands."""
+    """Additional informational commands."""
 
     @commands.command(aliases=["rlist"])
     @commands.guild_only()
@@ -34,7 +36,7 @@ class Information:
         for member in ctx.guild.members:
             if role in member.roles:
                 members_with_role.append(member.mention)
-        if len(members_with_role) == 0:
+        if members_with_role:
             await ctx.send("Nobody has that role. :<")
         else:
             embed = discord.Embed(title=f"Members with {role.name}: {len(members_with_role)}")
