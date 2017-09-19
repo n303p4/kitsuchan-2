@@ -1,1 +1,9 @@
-{"discord_token": "DISCORD TOKEN GOES HERE", "module_blacklist": [], "prefix": "!", "myanimelist_username": "immaweeb", "myanimelist_password": "lol"}
+{
+    "discord_token": "DISCORD TOKEN GOES HERE",
+    "module_blacklist": [],
+    "prefix": "YOUR PREFIX GOES HERE MEOW",
+    "myanimelist_username": "immaweeb",
+    "myanimelist_password": "lol",
+    "description": "A DESCRIPTION IS YOU",
+    "dbots_token": "FOR USE ON bots.discord.pw"
+}

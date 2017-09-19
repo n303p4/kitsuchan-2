@@ -56,4 +56,4 @@ class Bot(commands.AutoShardedBot):
         if not filename:
             filename = self.config_file
         with open(filename, "w") as file_object:
-            json.dump(self.config, file_object)
+            json.dump(self.config, file_object, indent=4, sort_keys=True)
