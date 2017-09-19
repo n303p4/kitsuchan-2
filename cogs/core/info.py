@@ -110,8 +110,8 @@ class Information:
         embed = discord.Embed(title=f"Custom emojis for {ctx.guild.name}")
         emoji_list = []
         for emoji in ctx.guild.emojis:
-            emoji_list.append(f"{emoji.name}: {emoji}")
-        embed.description = "\n".join(emoji_list)
+            emoji_list.append(str(emoji))
+        embed.description = " ".join(emoji_list)
         await ctx.send(embed=embed)
 
     @commands.command(brief="Display custom emoji info.",
