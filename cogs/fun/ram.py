@@ -8,6 +8,8 @@ import random
 import discord
 from discord.ext import commands
 
+from k2 import helpers
+
 systemrandom = random.SystemRandom()
 
 BASE_URL_API = "https://rra.ram.moe/i/r?type={0}"
@@ -17,9 +19,10 @@ EMOJIS_KILL = (":gun:", ":knife:", ":eggplant:", ":bear:", ":fox:", ":wolf:", ":
                ":broken_heart:", ":crossed_swords:", ":fire:")
 
 
-async def _generate_message(ctx, kind: str=None, user: str=discord.Member):
+async def _generate_message(ctx, kind: str=None, user: str=None):
     """Generate a message based on the user."""
-    if not kind:
+    user = await helpers.member_by_substring(ctx, user)
+    if not kind or not user:
         message = ""
     elif user.id == ctx.bot.user.id:
         message = f"Aw, thank you. Here, have one back. :3"
@@ -67,7 +70,7 @@ class Ram:
 
     @commands.command(aliases=["cuddles", "snuggle", "snuggles"])
     @commands.cooldown(6, 12)
-    async def cuddle(self, ctx, *, user: discord.Member):
+    async def cuddle(self, ctx, *, user: str):
         """Cuddle a user!
 
         * user - The user to be cuddled.
@@ -77,7 +80,7 @@ class Ram:
 
     @commands.command()
     @commands.cooldown(6, 12)
-    async def hug(self, ctx, *, user: discord.Member):
+    async def hug(self, ctx, *, user: str):
         """Hug a user!
 
         * user - The user to be hugged.
@@ -87,7 +90,7 @@ class Ram:
 
     @commands.command()
     @commands.cooldown(6, 12)
-    async def kiss(self, ctx, *, user: discord.Member):
+    async def kiss(self, ctx, *, user: str):
         """Kiss a user!
 
         * user - The user to be kissed.
@@ -103,7 +106,7 @@ class Ram:
 
     @commands.command()
     @commands.cooldown(6, 12)
-    async def lick(self, ctx, *, user: discord.Member):
+    async def lick(self, ctx, *, user: str):
         """Lick a user!
 
         * user - The user to be licked.
@@ -131,7 +134,7 @@ class Ram:
 
     @commands.command(aliases=["headpat", "pet"])
     @commands.cooldown(6, 12)
-    async def pat(self, ctx, *, user: discord.Member):
+    async def pat(self, ctx, *, user: str):
         """Pat a user!
 
         * user - The user to be patted.
@@ -147,7 +150,7 @@ class Ram:
 
     @commands.command()
     @commands.cooldown(6, 12)
-    async def slap(self, ctx, *, user: discord.Member):
+    async def slap(self, ctx, *, user: str):
         """Slap a user!
 
         * user - The user to be slapped.
@@ -163,7 +166,7 @@ class Ram:
 
     @commands.command()
     @commands.cooldown(6, 12)
-    async def stare(self, ctx, *, user: discord.Member):
+    async def stare(self, ctx, *, user: str):
         """Stare at a user!
 
         * user - The user to be stared at.
@@ -173,7 +176,7 @@ class Ram:
 
     @commands.command()
     @commands.cooldown(6, 12)
-    async def tickle(self, ctx, *, user: discord.Member):
+    async def tickle(self, ctx, *, user: str):
         """Tickle a user!
 
         * user - The user to be tickled.

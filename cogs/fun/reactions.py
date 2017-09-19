@@ -11,6 +11,8 @@ import random
 import discord
 from discord.ext import commands
 
+from k2 import helpers
+
 systemrandom = random.SystemRandom()
 
 BASE_URL_API = "https://rra.ram.moe/i/r?type={0}"
@@ -20,8 +22,9 @@ EMOJIS_KILL = (":gun:", ":knife:", ":eggplant:", ":bear:", ":fox:", ":wolf:", ":
                ":broken_heart:", ":crossed_swords:", ":fire:")
 
 
-async def _generate_message(ctx, kind: str=None, user: discord.Member=None):
+async def _generate_message(ctx, kind: str=None, user: str=None):
     """Generate a message based on the user."""
+    user = await helpers.member_by_substring(ctx, user)
     if not kind or not user:
         message = ""
     elif user.id == ctx.bot.user.id:
@@ -83,7 +86,7 @@ class Reactions:
             elif not message_indicator:
                 helptext = f"{key.capitalize()} a user!"
 
-                async def callback(self, ctx, *, user: discord.Member):
+                async def callback(self, ctx, *, user: str):
                     message = await _generate_message(ctx, ctx.command.name, user)
                     await _send_image(ctx, self.data[ctx.command.name]["images"], message)
 
@@ -108,10 +111,13 @@ class Reactions:
 
     @commands.command(aliases=["murder"])
     @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def kill(self, ctx, *, user: discord.Member):
+    async def kill(self, ctx, *, user: str):
         """Kill a user!
 
         * user - The user to kill."""
+
+        user = await helpers.member_by_substring(ctx, user)
+
         is_owner = await ctx.bot.is_owner(user)
         if user.id == ctx.bot.user.id:
             await ctx.send("Kon kon, I'm invincible! :3")
