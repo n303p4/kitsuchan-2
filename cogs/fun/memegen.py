@@ -27,7 +27,7 @@ class Memes:
             user = await helpers.member_by_substring(ctx, thing)
             image_url = user.avatar_url
         except commands.BadArgument:
-            image_url = thing
+            image_url = thing.strip("<>")
         lines = lines.split("|")
         if len(lines) < 2:
             await ctx.send("Please split the top and bottom lines with a |.")
