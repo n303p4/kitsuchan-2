@@ -16,7 +16,8 @@ class Memes:
     @commands.command(aliases=["usermeme", "um"])
     @commands.cooldown(6, 12)
     async def meme(self, ctx, thing: str, *, lines: str):
-        """Generates a meme of a user or general image URL. Separate lines with a |.
+        """Generates a meme of a user or an image URL.
+        Separate lines of text with a |.
 
         Example usage:
 
