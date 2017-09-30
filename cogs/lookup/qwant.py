@@ -40,7 +40,7 @@ class Qwant:
                     return
                 item = systemrandom.choice(data["data"]["result"]["items"])
                 embed = discord.Embed(title=html.unescape(item["title"]))
-                embed.description = item["url"]
+                embed.description = f"{item['url']}\n{item['media']}"
                 embed.set_image(url=item["media"])
                 embed.set_footer(text="Powered by Qwant")
                 await ctx.send(embed=embed)
