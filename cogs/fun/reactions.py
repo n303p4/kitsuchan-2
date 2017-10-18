@@ -15,9 +15,6 @@ from k2 import helpers
 
 systemrandom = random.SystemRandom()
 
-BASE_URL_API = "https://rra.ram.moe/i/r?type={0}"
-BASE_URL_IMAGE = "https://cdn.ram.moe{0[path]}"
-
 EMOJIS_KILL = (":gun:", ":knife:", ":eggplant:", ":bear:", ":fox:", ":wolf:", ":snake:",
                ":broken_heart:", ":crossed_swords:", ":fire:")
 

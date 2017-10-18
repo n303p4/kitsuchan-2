@@ -83,14 +83,6 @@
             "depressed"
         ]
     },
-    "facedesk": {
-        "images": [
-            "https://media.tumblr.com/tumblr_lqegp8wjxZ1qktqch.gif"
-        ],
-        "aliases": [
-            "fdesk"
-        ]
-    },
     "glomp": {
         "images": [
             "https://safebooru.org/images/1575/8e2b95aefa17208aa5b5bc2aa687a8d791adf20a.gif",
@@ -152,16 +144,6 @@
             "https://safebooru.org/images/1124/a0115d63bff6577d6c4592431c49e57936c82b50.gif"
         ],
         "message": "@.@"
-    },
-    "poke": {
-        "images": [
-            "https://safebooru.org/images/2051/031566980728255e6d7e2fba8c12a3c38ea7598a.gif",
-            "https://safebooru.org/images/1169/3edae332d38c887a8723207d1bc0dffac8244591.gif"
-        ],
-        "message": "",
-        "aliases": [
-            "boop"
-        ]
     },
     "sandwich": {
         "images": [
