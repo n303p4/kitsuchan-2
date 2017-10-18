@@ -5,5 +5,6 @@
     "myanimelist_username": "immaweeb",
     "myanimelist_password": "lol",
     "description": "A DESCRIPTION IS YOU",
-    "dbots_token": "FOR USE ON bots.discord.pw"
+    "dbots_token": "FOR USE ON bots.discord.pw",
+    "weebsh_token":"Token for weeb.sh"
 }

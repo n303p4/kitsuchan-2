@@ -2,7 +2,6 @@
 # pylint: disable=C0103
 
 """Contains a cog for various weeb reaction commands."""
-
 import random
 
 import discord
@@ -12,14 +11,13 @@ from k2 import helpers
 
 systemrandom = random.SystemRandom()
 
-BASE_URL_API = "https://rra.ram.moe/i/r?type={0}"
-BASE_URL_IMAGE = "https://cdn.ram.moe{0[path]}"
-
+BASE_URL_API_TYPE = "https://api.weeb.sh/images/random?type={0}"
+BASE_URL_API_TAG = "https://api.weeb.sh/images/random?tags={0}"
 EMOJIS_KILL = (":gun:", ":knife:", ":eggplant:", ":bear:", ":fox:", ":wolf:", ":snake:",
                ":broken_heart:", ":crossed_swords:", ":fire:")
 
 
-async def _generate_message(ctx, kind: str=None, user: str=None):
+async def _generate_message(ctx, kind: str = None, user: str = None):
     """Generate a message based on the user."""
     user = await helpers.member_by_substring(ctx, user)
     if not kind or not user:
@@ -36,27 +34,31 @@ async def _generate_message(ctx, kind: str=None, user: str=None):
     return message
 
 
-async def _rra(ctx, kind: str, message: str=""):
+async def _rra(ctx, kind: str, message: str = "", usetag: bool = False):
     """A helper function that grabs an image and posts it in response to a user.
 
     * kind - The type of image to retrieve.
     * user - The member to mention in the command.
     """
-    url = BASE_URL_API.format(kind)
-    async with ctx.bot.session.get(url) as response:
+    if usetag:
+        url = BASE_URL_API_TAG.format(kind)
+    else:
+        url = BASE_URL_API_TYPE.format(kind)
+    async with ctx.bot.session.get(url, headers={
+        'Authorization': f"Wolke {ctx.bot.config.get('weebsh_token')}"}) as response:
         if response.status == 200:
             data = await response.json()
-            url_image = BASE_URL_IMAGE.format(data).replace("i/", "")
+            url_image = data['url']
             embed = discord.Embed(title=message)
             embed.set_image(url=url_image)
-            embed.set_footer(text="Powered by ram.moe")
+            embed.set_footer(text="Powered by weeb.sh")
             await ctx.send(embed=embed)
         else:
             message = "Could not retrieve image. :("
             await ctx.send(message)
 
 
-async def _send_image(ctx, url_image, message: str=""):
+async def _send_image(ctx, url_image, message: str = ""):
     """A helper function that creates an embed with an image and sends it off."""
     if isinstance(url_image, (tuple, list)):
         url_image = systemrandom.choice(url_image)
@@ -67,6 +69,17 @@ async def _send_image(ctx, url_image, message: str=""):
 
 class Ram:
     """Weeb reaction commands."""
+
+    @commands.command(aliases=["chomp"])
+    @commands.cooldown(6, 12)
+    async def bite(self, ctx, *, user: str):
+        """Bite a user!
+
+        * user - the user to be bitten.
+        """
+        # custom message here since it sounds weird to use bite
+        message = f"**{user.display_name}**, you got bitten by **{ctx.author.display_name}!**"
+        await _rra(ctx, "bite", message)
 
     @commands.command(aliases=["cuddles", "snuggle", "snuggles"])
     @commands.cooldown(6, 12)
@@ -87,6 +100,12 @@ class Ram:
         """
         message = await _generate_message(ctx, "hug", user)
         await _rra(ctx, "hug", message)
+
+    @commands.command(aliases=["fdesk"])
+    @commands.cooldown(6, 12)
+    async def facedesk(self, ctx):
+        """Hit your face on the desk!"""
+        await _rra(ctx, "facedesk","", True)
 
     @commands.command()
     @commands.cooldown(6, 12)
@@ -124,7 +143,7 @@ class Ram:
     @commands.cooldown(6, 12)
     async def nyan(self, ctx):
         """Nyan!"""
-        await _rra(ctx, "nyan", f"{ctx.invoked_with.capitalize()}~")
+        await _rra(ctx, "neko", f"{ctx.invoked_with.capitalize()}~")
 
     @commands.command()
     @commands.cooldown(6, 12)
@@ -141,6 +160,16 @@ class Ram:
         """
         message = await _generate_message(ctx, "pat", user)
         await _rra(ctx, "pat", message)
+
+    @commands.command()
+    @commands.cooldown(6, 12)
+    async def poke(self, ctx, *, user: str):
+        """Poke someone
+
+        * user - the user to be poked.
+        """
+        message = await _generate_message(ctx, "poke", user)
+        await _rra(ctx, "poke", message)
 
     @commands.command()
     @commands.cooldown(6, 12)
