@@ -98,7 +98,7 @@ class Random:
             else:
                 await ctx.send("Could not reach random.cat. :<")
 
-    @commands.command(aliases=["kemonomimi", "catgirl", "neko", "nekomimi",
+    @commands.command(aliases=["kemonomimi", "catgirl", "kneko", "nekomimi",
                                "foxgirl" "kitsune", "kitsunemimi"])
     @commands.cooldown(6, 12)
     async def kemono(self, ctx):

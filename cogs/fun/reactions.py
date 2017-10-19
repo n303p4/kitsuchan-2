@@ -55,7 +55,6 @@ class Reactions:
         with open("reactions.json") as fobject:
             self.data = json.load(fobject)
 
-        count = 0
         # TODO Add a help field to this mess.
         for key in self.data:
 
@@ -104,7 +103,6 @@ class Reactions:
             command = commands.cooldown(6, 12, commands.BucketType.channel)(command)
             command.instance = self
             setattr(self, key, command)
-            count += 1
 
     @commands.command(aliases=["murder"])
     @commands.cooldown(6, 12, commands.BucketType.channel)
