@@ -75,7 +75,9 @@ class Reactions:
             if message_indicator is None:
                 helptext = f"{key.capitalize()}!"
 
-                async def callback(self, ctx):
+                async def callback(self, ctx, *, args=None):
+                    if args:
+                        return
                     await _send_image(ctx, self.data[ctx.command.name]["images"])
 
             # Zero-length string.
@@ -90,7 +92,9 @@ class Reactions:
             else:
                 helptext = f"{key.capitalize()}!"
 
-                async def callback(self, ctx):
+                async def callback(self, ctx, *, args=None):
+                    if args:
+                        return
                     await _send_image(ctx, self.data[ctx.command.name]["images"],
                                       self.data[ctx.command.name]["message"])
 
