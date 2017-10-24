@@ -169,6 +169,8 @@ class About:
             status = user.status.name.capitalize()
         embed.add_field(name="Status", value=status)
 
+        embed.add_field(name="Color", value=str(user.color))
+
         embed.add_field(name="Joined guild at", value=user.joined_at.ctime())
         embed.add_field(name="Joined Discord at", value=user.created_at.ctime())
 

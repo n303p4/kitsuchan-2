@@ -4,8 +4,8 @@
 """Contains a cog for various weeb reaction commands."""
 import random
 
-import discord
 import requests
+import discord
 from discord.ext import commands
 
 from k2 import helpers
