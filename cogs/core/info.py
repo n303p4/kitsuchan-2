@@ -62,41 +62,11 @@ class Information:
             embed.add_field(name="Administrator", value=True)
 
         else:
-            # TODO THIS IS AWFUL
-            permissions = {"Create instant invite": role.permissions.create_instant_invite,
-                           "Kick members": role.permissions.kick_members,
-                           "Ban members": role.permissions.ban_members,
-                           "Administrator": role.permissions.administrator,
-                           "Manage channels": role.permissions.manage_channels,
-                           "Manage guild": role.permissions.manage_guild,
-                           "Add reactions": role.permissions.add_reactions,
-                           "View audit log": role.permissions.view_audit_log,
-                           "Read messages": role.permissions.read_messages,
-                           "Send messages": role.permissions.send_messages,
-                           "Send TTS messages": role.permissions.send_tts_messages,
-                           "Manage messages": role.permissions.manage_messages,
-                           "Embed links": role.permissions.embed_links,
-                           "Attach files": role.permissions.attach_files,
-                           "Read message history": role.permissions.read_message_history,
-                           "Mention everyone": role.permissions.mention_everyone,
-                           "External emojis": role.permissions.external_emojis,
-                           "Connect to voice channel": role.permissions.connect,
-                           "Speak in voice channel": role.permissions.speak,
-                           "Mute members": role.permissions.mute_members,
-                           "Deafen members": role.permissions.deafen_members,
-                           "Move members": role.permissions.move_members,
-                           "Use voice activation": role.permissions.use_voice_activation,
-                           "Change nickname": role.permissions.change_nickname,
-                           "Manage nicknames": role.permissions.manage_nicknames,
-                           "Manage roles": role.permissions.manage_roles,
-                           "Manage webhooks": role.permissions.manage_webhooks,
-                           "Manage emojis": role.permissions.manage_emojis}
-
             paginator = commands.Paginator(prefix="", suffix="")
 
-            for key in permissions:
-                if permissions[key]:
-                    paginator.add_line(f"{key}")
+            for permission, value in role.permissions:
+                if value:
+                    paginator.add_line(str(permission).capitalize().replace("_", " "))
 
             for page in paginator.pages:
                 embed.add_field(name="Permissions", value=page)
