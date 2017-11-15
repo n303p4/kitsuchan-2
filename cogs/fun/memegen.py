@@ -30,8 +30,7 @@ class Memes:
 
         Example usage:
 
-        kit meme "I am" "a meme"
-        kit meme I_am a_meme
+        kit meme I am | a meme
         """
         image_url = None
         async for message in ctx.channel.history():
