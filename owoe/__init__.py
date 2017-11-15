@@ -63,7 +63,7 @@ class Owoe:
             return response.status
 
     async def random_image(self, type_: str=None, tags: str=None):
-        """Get a random image from weeb.sh by calling the `/random` endpoint.
+        """Get a random image from weeb.sh by calling the `/random` endpoint. This is a coroutine.
 
         Possible return values are as follows:
 
