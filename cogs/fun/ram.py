@@ -41,8 +41,11 @@ class Ram:
         """A weeb cog that builds reaction commands automatically."""
         self.bot = bot
         self.owoe = owoe.Owoe(token=self.bot.config["weebsh_token"], clientsession=self.bot.session)
-        self.bot.loop.run_until_complete(self.owoe.update_image_types())
-        self._build_commands()
+        try:  # TODO this is hack
+            self.bot.loop.run_until_complete(self.owoe.update_image_types())
+            self._build_commands()
+        except RuntimeError:
+            pass
 
     def _build_commands(self):
         """Internal use only. Procedurally builds all the commands."""
