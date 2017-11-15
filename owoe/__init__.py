@@ -67,8 +67,8 @@ class Owoe:
 
         Possible return values are as follows:
 
+        * If `type_` is not valid, raises an `Owoe.InvalidImageType` error.
         * If successful, returns an `str` with the URL of the image.
-        * If no parameters are supplied, raises a `NoParametersSpecified` Exception.
         * If an HTTP status error occurs, returns an `int` with the status code.
 
         * `type_` - An `str` representing the type of the image to be obtained.
