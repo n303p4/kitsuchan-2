@@ -5,10 +5,10 @@
 import random
 
 import discord
+import owoe
 from discord.ext import commands
 
 from k2 import helpers
-import owoe
 
 systemrandom = random.SystemRandom()
 
