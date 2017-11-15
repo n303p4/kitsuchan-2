@@ -5,13 +5,14 @@
 import discord
 from discord.ext import commands
 
-from k2 import helpers
-
 BASE_URL_MEMEGEN = "https://memegen.link/custom/{0}/{1}.jpg?alt={2}"
 
 
 class Memes:
     """A cog that contains a meme generator."""
+
+    def __init__(self):
+        self.footer_text = "Powered by memegen.link"
 
     @commands.command(aliases=["usermeme", "um"])
     @commands.cooldown(6, 12)
@@ -40,7 +41,9 @@ class Memes:
                         if embed.type == "image":
                             image_url = embed.url
                             break
-                        elif embed.type == "rich" and embed.image is not discord.Embed.Empty:
+                        elif (embed.type == "rich" and
+                              embed.image is not discord.Embed.Empty and
+                              embed.footer.text != self.footer_text):
                             image_url = embed.image.url
                             break
                 if image_url:
@@ -60,6 +63,7 @@ class Memes:
         embed = discord.Embed(title="Image link")
         embed.url = url
         embed.set_image(url=url)
+        embed.set_footer(text=self.footer_text)
         await ctx.send(embed=embed)
 
 
