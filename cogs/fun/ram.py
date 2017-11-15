@@ -2,6 +2,7 @@
 # pylint: disable=C0103
 
 """Contains a cog for various weeb reaction commands."""
+import asyncio
 import random
 
 import discord
@@ -34,29 +35,30 @@ class Ram:
     """Weeb reaction commands."""
 
     def __init__(self, bot):
-        """A weeb cog that builds reaction commands automatically.
-
-        This is probably the hackiest cog in the bot. If it randomly breaks on reload, call
-        the `weebupdate` command and it should fix things right up.
-        """
+        """A weeb cog with reaction commands."""
         self.bot = bot
         self.owoe = owoe.Owoe(self.bot.config["weebsh_token"], self.bot.session)
-        try:  # TODO this is hack
-            self.bot.loop.run_until_complete(self.owoe.update_image_types())
-            self.bot.loop.run_until_complete(self.owoe.update_image_tags())
-            self._build_commands()
-        except Exception:
-            pass
 
-    def _build_commands(self):
-        """Internal use only. Procedurally builds all the commands."""
+        self.bot.loop.create_task(self._finish_init())
+
+    async def _finish_init(self):
+        """Notice that this does *not* properly handle HTTP status codes."""
+        status_types = await self.owoe.update_image_types()
+        status_tags = await self.owoe.update_image_tags()
+        if status_types or status_tags:
+            await asyncio.sleep(30)
+            await self._finish_init()
+        else:
+            await self._build_commands()
+
+    async def _build_commands(self):
         for key in self.owoe.types:
 
-            # Kill duplicate commands. `weebupdate` assumes that all the types are in this cog.
+            # Avoid duplicate commands by removing them.
             if key in self.bot.all_commands.keys():
                 self.bot.remove_command(key)
 
-            helptext = f"Fetches a random image of category {key.capitalize().replace('_', ' ')}."
+            helptext = f"{key.capitalize()}!"
 
             async def callback(self, ctx, *tags):
                 for tag in tags:
@@ -77,6 +79,7 @@ class Ram:
             command = commands.cooldown(6, 12, commands.BucketType.channel)(command)
             command.instance = self
             setattr(self, key, command)
+            self.bot.add_command(command)
 
     @commands.command()
     @commands.cooldown(6, 12, commands.BucketType.channel)
@@ -93,23 +96,6 @@ class Ram:
         embed = discord.Embed(title="List of valid weeb.sh tags")
         embed.description = ", ".join(self.owoe.tags)[:2000]
         await ctx.send(embed=embed)
-
-    @commands.command()
-    @commands.is_owner()
-    async def weebupdate(self, ctx):
-        """Update list of weeb.sh types and tags. Bot owner only."""
-        status = await self.owoe.update_image_types()
-        await self.owoe.update_image_tags()
-        if status:
-            await ctx.send("Failed to reach the endpoint.")
-            return
-        else:
-            await ctx.send("Updated from weeb.sh successfully.")
-        self._build_commands()
-        for type_ in self.owoe.types:
-            if type_ in self.bot.all_commands.keys():
-                self.bot.remove_command(type_)
-            self.bot.add_command(getattr(self, type_))
 
 
 def setup(bot):

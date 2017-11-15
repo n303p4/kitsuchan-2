@@ -18,52 +18,54 @@ class Memes:
 
     @commands.command(aliases=["usermeme", "um"])
     @commands.cooldown(6, 12)
-    async def meme(self, ctx, *, lines: str):
+    async def meme(self, ctx, top_line: str,
+                   bottom_line: str, *, member: discord.Member=None):
         """Generates a meme of an image with a top line and a bottom line.
+        Use quotation marks or underscores if you need spaces.
 
+        If you mention a user at the end, the bot will generate a meme using that user's avatar.
         If you attach an image when you issue the command, then the bot will use that image.
         Otherwise, it attempts to use the last image it can find in the last 100 chat messages.
 
-        This secondary behavior is useful because you can immediately follow up a previous image
+        This last behavior is useful because you can immediately follow up a previous image
         command with this command. For example, following up an avatar command to generate a
         meme of someone's avatar.
 
-        Be sure to separate your lines of text with a |.
-
         Example usage:
 
-        kit meme I am | a meme
+        kit meme "I am" "a meme"
+        kit meme I_am a_meme
         """
         image_url = None
-        async for message in ctx.channel.history():
-            if message.embeds:
-                for embed in reversed(message.embeds):
-                    if embed.type == "image":
-                        image_url = embed.url
-                        break
-                    elif (embed.type == "rich" and
-                            embed.image is not discord.Embed.Empty and
-                            embed.footer.text != self.footer_text):
-                        image_url = embed.image.url
-                        break
-            elif message.attachments:
-                for attachment in message.attachments:
-                    if attachment.height:
-                        image_url = attachment.url
-                        break
-            if image_url:
-                break
+        if member:
+            image_url = member.avatar_url_as(format="png")
+        else:
+            async for message in ctx.channel.history():
+                if message.embeds:
+                    for embed in reversed(message.embeds):
+                        if embed.type == "image":
+                            image_url = embed.url
+                            break
+                        elif (embed.type == "rich" and
+                                embed.image is not discord.Embed.Empty and
+                                embed.footer.text != self.footer_text):
+                            image_url = embed.image.url
+                            break
+                elif message.attachments:
+                    for attachment in message.attachments:
+                        if attachment.height:
+                            image_url = attachment.url
+                            break
+                if image_url:
+                    break
         if not image_url:
             await ctx.send(("No images found in recent chat history. "
-                            "You may also upload an image as an attachment."))
+                            "You may upload an image as an attachment."
+                            "Use quotation marks or underscores if you need to use spaces."))
             return
-        lines = lines.split("|")
-        if len(lines) < 2:
-            await ctx.send("Please split the top and bottom lines with a |.")
-            return
-        for index, item in enumerate(lines):
-            lines[index] = item.strip().replace(" ", "_")
-        url = BASE_URL_MEMEGEN.format(urllib.parse.quote(lines[0]), urllib.parse.quote(lines[1]),
+        top_line = top_line.strip().replace(" ", "_")
+        bottom_line = bottom_line.strip().replace(" ", "_")
+        url = BASE_URL_MEMEGEN.format(urllib.parse.quote(top_line), urllib.parse.quote(bottom_line),
                                       image_url)
         print(url)
         embed = discord.Embed(title="Image link")
