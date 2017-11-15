@@ -44,7 +44,7 @@ class Memes:
                             embed.footer.text != self.footer_text):
                         image_url = embed.image.url
                         break
-            elif ctx.message.attachments:
+            elif message.attachments:
                 for attachment in ctx.message.attachments:
                     if attachment.height:
                         image_url = attachment.url
