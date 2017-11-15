@@ -44,7 +44,7 @@ class Ram:
         the `weebupdate` command and it should fix things right up.
         """
         self.bot = bot
-        self.owoe = owoe.Owoe(token=self.bot.config["weebsh_token"], clientsession=self.bot.session)
+        self.owoe = owoe.Owoe(self.bot.config["weebsh_token"], self.bot.session)
         try:  # TODO this is hack
             self.bot.loop.run_until_complete(self.owoe.update_image_types())
             self._build_commands()
