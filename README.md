@@ -19,7 +19,7 @@ The bot should include a sample configuration file called `config.example.json`.
 `config.json` and fill it out accordingly. Then in a terminal, run:
 
 ```bash
-python3 -m pip install --user -U git+https://github.com/Rapptz/discord.py@rewrite
+python3 -m pip install --user -r requirements.txt
 python3 kitsuchan.py
 ```
 
