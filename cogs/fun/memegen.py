@@ -15,19 +15,40 @@ class Memes:
 
     @commands.command(aliases=["usermeme", "um"])
     @commands.cooldown(6, 12)
-    async def meme(self, ctx, thing: str, *, lines: str):
-        """Generates a meme of a user or an image URL.
-        Separate lines of text with a |.
+    async def meme(self, ctx, *, lines: str):
+        """Generates a meme of an image.
+
+        If you attach an image when you issue the command, then the bot will use that image.
+        Otherwise, it attempts to use the last image it can find in the last 100 chat messages.
+
+        Be sure to separate your lines of text with a |.
 
         Example usage:
 
-        kit meme @Kitsuchan#1024 I am | a meme
+        kit meme I am | a meme
         """
-        try:
-            user = await helpers.member_by_substring(ctx, thing)
-            image_url = user.avatar_url
-        except commands.BadArgument:
-            image_url = thing.strip("<>")
+        image_url = None
+        if ctx.message.attachments:
+            for attachment in ctx.message.attachments:
+                if attachment.height:
+                    image_url = attachment.url
+                    break
+        else:
+            async for message in await ctx.channel.history():
+                if message.embeds:
+                    for embed in reversed(message.embeds):
+                        if embed.type == "image":
+                            image_url = embed.url
+                            break
+                        elif embed.type == "rich" and embed.image is not discord.Embed.Empty:
+                            image_url = embed.image.url
+                            break
+                if image_url:
+                    break
+            if not image_url:
+                await ctx.send(("No images found in recent chat history. "
+                                "You may also upload an image as an attachment."))
+                return
         lines = lines.split("|")
         if len(lines) < 2:
             await ctx.send("Please split the top and bottom lines with a |.")
