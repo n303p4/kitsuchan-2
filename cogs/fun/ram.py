@@ -44,7 +44,7 @@ class Ram:
         try:  # TODO this is hack
             self.bot.loop.run_until_complete(self.owoe.update_image_types())
             self._build_commands()
-        except RuntimeError:
+        except Exception:
             pass
 
     def _build_commands(self):
