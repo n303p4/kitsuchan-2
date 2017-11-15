@@ -16,7 +16,7 @@ class Memes:
     def __init__(self):
         self.footer_text = "Powered by memegen.link"
 
-    @commands.command(aliases=["usermeme", "um"])
+    @commands.command()
     @commands.cooldown(6, 12)
     async def meme(self, ctx, *, pair_of_lines: str):
         """Generates a meme of an image with a top line and a bottom line.
