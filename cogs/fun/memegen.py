@@ -2,6 +2,8 @@
 
 """A cog containing a command that generates a meme out of someone."""
 
+import urllib.parse
+
 import discord
 from discord.ext import commands
 
@@ -61,7 +63,7 @@ class Memes:
             return
         for index, item in enumerate(lines):
             lines[index] = item.strip().replace(" ", "_")
-        url = BASE_URL_MEMEGEN.format(lines[0], lines[1], image_url)
+        url = BASE_URL_MEMEGEN.format(urllib.parse.quote(lines[0]), urllib.parse.quote(lines[1]), image_url)
         print(url)
         embed = discord.Embed(title="Image link")
         embed.url = url
