@@ -39,7 +39,7 @@ class Ram:
 
     def __init__(self, bot):
         """A weeb cog that builds reaction commands automatically.
-        
+
         This is probably the hackiest cog in the bot. If it randomly breaks on reload, call
         the `weebupdate` command and it should fix things right up.
         """
