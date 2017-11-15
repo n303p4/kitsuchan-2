@@ -34,7 +34,7 @@ class Memes:
                     image_url = attachment.url
                     break
         else:
-            async for message in await ctx.channel.history():
+            async for message in ctx.channel.history():
                 if message.embeds:
                     for embed in reversed(message.embeds):
                         if embed.type == "image":
