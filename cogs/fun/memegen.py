@@ -45,7 +45,7 @@ class Memes:
                         image_url = embed.image.url
                         break
             elif message.attachments:
-                for attachment in ctx.message.attachments:
+                for attachment in message.attachments:
                     if attachment.height:
                         image_url = attachment.url
                         break
