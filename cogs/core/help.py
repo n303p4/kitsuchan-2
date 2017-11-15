@@ -29,7 +29,7 @@ class Help:
                         commands_list.setdefault(command.cog_name, []).append(command.name)
             for key in sorted(list(commands_list.keys())):  # TODO Not scalable past 25 cogs
                 embed.add_field(name=key, value=", ".join(sorted(commands_list[key])))
-            embed.set_footer(text=(f"Run {ctx.invoked_with} command for "
+            embed.set_footer(text=(f"Run \"{ctx.invoked_with} command\" for "
                                    "more details on a command."))
             await ctx.send(embed=embed)
         else:
