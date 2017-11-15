@@ -16,6 +16,16 @@ class Memes:
     def __init__(self):
         self.footer_text = "Powered by memegen.link"
 
+    async def _send_meme_image(self, ctx, top_line, bottom_line, image_url):
+        """Internal method for sending images based on memegen.link."""
+        url = BASE_URL_MEMEGEN.format(urllib.parse.quote(top_line), urllib.parse.quote(bottom_line),
+                                      image_url)
+        embed = discord.Embed(title="Image link")
+        embed.url = url
+        embed.set_image(url=url)
+        embed.set_footer(text=self.footer_text)
+        await ctx.send(embed=embed)
+
     @commands.command()
     @commands.cooldown(6, 12)
     async def meme(self, ctx, *, pair_of_lines: str):
@@ -62,14 +72,7 @@ class Memes:
             return
         top_line = lines[0].strip().replace(" ", "_")
         bottom_line = lines[1].strip().replace(" ", "_")
-        url = BASE_URL_MEMEGEN.format(urllib.parse.quote(top_line), urllib.parse.quote(bottom_line),
-                                      image_url)
-        print(url)
-        embed = discord.Embed(title="Image link")
-        embed.url = url
-        embed.set_image(url=url)
-        embed.set_footer(text=self.footer_text)
-        await ctx.send(embed=embed)
+        await self._send_meme_image(ctx, top_line, bottom_line, image_url)
 
 
 def setup(bot):
