@@ -80,15 +80,17 @@ class Ram:
     async def weebupdate(self, ctx):
         """Update list of weeb.sh types. Bot owner only."""
         status = await self.owoe.update_image_types()
+        if status:
+            await ctx.send((f"Failed to update weeb.sh types with HTTP status code {status}. "
+                            "It's possible that the endpoint is down."))
+            return
+        else:
+            await ctx.send("Updated weeb.sh types successfully.")
         self._build_commands()
         for type_ in self.owoe.types:
             if type_ in self.bot.all_commands.keys():
                 self.bot.remove_command(type_)
             self.bot.add_command(getattr(self, type_))
-        if status:
-            await ctx.send(f"Failed to update weeb.sh types with HTTP status code {status}")
-        else:
-            await ctx.send("Updated weeb.sh types successfully.")
 
 
 def setup(bot):
