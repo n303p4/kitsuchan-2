@@ -17,10 +17,14 @@ class Memes:
     @commands.command(aliases=["usermeme", "um"])
     @commands.cooldown(6, 12)
     async def meme(self, ctx, *, lines: str):
-        """Generates a meme of an image.
+        """Generates a meme of an image with a top line and a bottom line.
 
         If you attach an image when you issue the command, then the bot will use that image.
         Otherwise, it attempts to use the last image it can find in the last 100 chat messages.
+
+        This secondary behavior is useful because you can immediately follow up a previous image
+        command with this command. For example, following up an avatar command to generate a
+        meme of someone's avatar.
 
         Be sure to separate your lines of text with a |.
 
