@@ -36,7 +36,7 @@ class Information:
         for member in ctx.guild.members:
             if role in member.roles:
                 members_with_role.append(member.mention)
-        if members_with_role:
+        if not members_with_role:
             await ctx.send("Nobody has that role. :<")
         else:
             embed = discord.Embed(title=f"Members with {role.name}: {len(members_with_role)}")
