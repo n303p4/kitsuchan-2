@@ -11,8 +11,8 @@ BASE_URL_TYPES = "https://api.weeb.sh/images/types"
 BASE_URL_RANDOM = "https://api.weeb.sh/images/random?{0}"
 
 
-class NoParametersSpecified(Exception):
-    """Raised if no valid parameters are supplied to a method."""
+class InvalidImageType(Exception):
+    """Raised if the image type is not valid."""
     pass
 
 
@@ -62,7 +62,7 @@ class Owoe:
                 return
             return response.status
 
-    async def random_image(self, type_: str=None, tags: str=None):
+    async def random_image(self, type_: str, tags: str):
         """Get a random image from weeb.sh by calling the `/random` endpoint. This is a coroutine.
 
         Possible return values are as follows:
@@ -76,8 +76,8 @@ class Owoe:
                     built-in Python `type`.
         * `tags` - An `str` representing a list of tags to use in the image search.
         """
-        if type_ not in self.types and not tags:
-            raise NoParametersSpecified()
+        if type_ not in self.types:
+            raise InvalidImageType()
 
         parameters_url = {}
         if type_:
