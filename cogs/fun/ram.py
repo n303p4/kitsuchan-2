@@ -38,7 +38,11 @@ class Ram:
     """Weeb reaction commands."""
 
     def __init__(self, bot):
-        """A weeb cog that builds reaction commands automatically."""
+        """A weeb cog that builds reaction commands automatically.
+        
+        This is probably the hackiest cog in the bot. If it randomly breaks on reload, call
+        the `weebupdate` command and it should fix things right up.
+        """
         self.bot = bot
         self.owoe = owoe.Owoe(token=self.bot.config["weebsh_token"], clientsession=self.bot.session)
         try:  # TODO this is hack
