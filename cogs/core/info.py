@@ -40,7 +40,9 @@ class Information:
             await ctx.send("Nobody has that role. :<")
         else:
             embed = discord.Embed(title=f"Members with {role.name}: {len(members_with_role)}")
-            embed.description = ", ".join(members_with_role)
+            embed.description = ", ".join(members_with_role[:30])
+            if len(members_with_role) > 30:
+                embed.set_footer(text=f"...and {len(members_with_role)-30} others.")
             await ctx.send(embed=embed)
 
     @commands.command(brief="Display role info.", aliases=["rinfo"])
