@@ -63,7 +63,8 @@ class Memes:
             return
         for index, item in enumerate(lines):
             lines[index] = item.strip().replace(" ", "_")
-        url = BASE_URL_MEMEGEN.format(urllib.parse.quote(lines[0]), urllib.parse.quote(lines[1]), image_url)
+        url = BASE_URL_MEMEGEN.format(urllib.parse.quote(lines[0]), urllib.parse.quote(lines[1]),
+                                      image_url)
         print(url)
         embed = discord.Embed(title="Image link")
         embed.url = url
