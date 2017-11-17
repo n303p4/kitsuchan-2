@@ -8,10 +8,8 @@ import sys
 import discord
 from discord.ext import commands
 
-try:  # This allows the extension to be used in other bots.
-    import k2
-except ImportError:
-    k2 = False
+import k2
+from k2 import helpers
 
 
 class About:
@@ -142,13 +140,15 @@ class About:
     @commands.command(brief="Display user info.", aliases=["user", "uinfo"])
     @commands.guild_only()
     @commands.cooldown(6, 12)
-    async def userinfo(self, ctx, *, user: discord.Member=None):
+    async def userinfo(self, ctx, *, user: str=None):
         """Display information about a user, such as status and roles.
         Defaults to the user who invoked the command.
 
         * user - Optional argument. A user in the current channel to get user information about."""
         if not user:
             user = ctx.author
+        else:
+            user = await helpers.member_by_substring(ctx, user)
 
         embed = discord.Embed(title=f"{str(user)}")
         embed.colour = user.color
