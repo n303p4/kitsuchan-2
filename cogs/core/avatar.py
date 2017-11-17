@@ -21,7 +21,7 @@ class Avatar:
         if not user:
             user = ctx.author
         else:
-            user = helpers.member_by_substring(user)
+            user = helpers.member_by_substring(ctx, user)
         await ctx.send(user.avatar_url)
 
     @commands.command(aliases=["gicon", "servericon", "sicon"])
