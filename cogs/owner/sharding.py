@@ -16,7 +16,7 @@ class Sharding:
     @commands.is_owner()
     async def shardinfo(self, ctx, shard_id: int=None):
         embed = discord.Embed(title="Shard information")
-        embed.add_field(name="Number of shards", value=len(ctx.bot.shard_count))
+        embed.add_field(name="Number of shards", value=ctx.bot.shard_count)
         embed.add_field(name="Shard serving this guild (first shard is 0)",
                         value=ctx.bot.shard_id)
         latency_string = "\n".join([f"Shard {t[0]}: {round(t[1], 2)}s" for t in ctx.bot.latencies])
