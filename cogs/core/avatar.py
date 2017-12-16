@@ -19,7 +19,7 @@ class Avatar:
         """Display a user's avatar.
         Defaults to displaying the avatar of the user who invoked the command.
 
-        * user - A member who you can mention for avatar.
+        * user - A text string that the bot will attempt to use to look up a user.
         
         You may also specify a size for the avatar after the username, e.g. avatar kit 512
         """
