@@ -61,10 +61,10 @@ class Ram:
             helptext = f"{key.capitalize()}!"
 
             async def callback(self, ctx, *tags):
+                tags = list(tags)
                 for tag in tags:
                     if tag not in self.owoe.tags:
-                        await ctx.send("Invalid tag. Use the `weebtags` command for a list.")
-                        return
+                        tags.remove(tag)
                 url_image = await self.owoe.random_image(type_=ctx.command.name, tags=tags)
                 if isinstance(url_image, str):
                     embed = discord.Embed()
