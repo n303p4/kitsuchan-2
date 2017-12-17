@@ -8,6 +8,7 @@ Requires Python 3.6+ and discord.py rewrite (1.0).
 
 import os
 import logging
+import sys
 
 from discord.ext import commands
 
@@ -19,10 +20,16 @@ logging.basicConfig(format=FORMAT)
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
 
+DIRECTORY_PATH = os.path.dirname(os.path.realpath(__file__))
+
 bot = core.Bot(command_prefix="", pm_help=None, config_file="config.json")
 
 
 if __name__ == "__main__":
+
+    if os.getcwd() != DIRECTORY_PATH and "-d" in sys.argv:
+        os.chdir(DIRECTORY_PATH)
+
     bot.load_config()
 
     assert (isinstance(bot.config.get("discord_token"), str)), "Bot token not valid."

@@ -2,30 +2,16 @@
 # pylint: disable=C0103
 
 """Contains a cog for various weeb reaction commands."""
+import asyncio
 import random
 
 import discord
-import requests
+import owoe
 from discord.ext import commands
 
 from k2 import helpers
 
 systemrandom = random.SystemRandom()
-
-BASE_URL_API_TYPES = "https://api.weeb.sh/images/types"
-BASE_URL_API_TYPE = "https://api.weeb.sh/images/random?type={0}"
-BASE_URL_API_TAG = "https://api.weeb.sh/images/random?tags={0}"
-EMOJIS_KILL = (":gun:", ":knife:", ":eggplant:", ":bear:", ":fox:", ":wolf:", ":snake:",
-               ":broken_heart:", ":crossed_swords:", ":fire:")
-
-
-def _get_image_types(token: str=None):
-    """Get image types."""
-    headers = {"Authorization": f"Wolke {token}"}
-    response = requests.get(BASE_URL_API_TYPES, headers=headers)  # TODO lmao requests
-    if response.status_code == 200:
-        return response.json()["types"]
-    return []
 
 
 async def _generate_message(ctx, kind: str=None, user: str=None):
@@ -45,64 +31,71 @@ async def _generate_message(ctx, kind: str=None, user: str=None):
     return message
 
 
-async def _rra(ctx, kind: str, message: str="", usetag: bool=False):
-    """A helper function that grabs an image and posts it in response to a user.
-
-    * kind - The type of image to retrieve.
-    * user - The member to mention in the command.
-    """
-    if usetag:
-        url = BASE_URL_API_TAG.format(kind)
-    else:
-        url = BASE_URL_API_TYPE.format(kind)
-    headers = {'Authorization': f"Wolke {ctx.bot.config.get('weebsh_token')}"}
-    async with ctx.bot.session.get(url, headers=headers) as response:
-        if response.status == 200:
-            data = await response.json()
-            url_image = data['url']
-            embed = discord.Embed(title=message)
-            embed.set_image(url=url_image)
-            embed.set_footer(text="Powered by weeb.sh")
-            await ctx.send(embed=embed)
-        else:
-            message = "Could not retrieve image. :("
-            await ctx.send(message)
-
-
-async def _send_image(ctx, url_image, message: str=""):
-    """A helper function that creates an embed with an image and sends it off."""
-    if isinstance(url_image, (tuple, list)):
-        url_image = systemrandom.choice(url_image)
-    embed = discord.Embed(title=message)
-    embed.set_image(url=url_image)
-    await ctx.send(embed=embed)
-
-
 class Ram:
     """Weeb reaction commands."""
 
     def __init__(self, bot):
-        """Procedurablly build reaction commands."""
+        """A weeb cog with reaction commands."""
+        self.bot = bot
+        self.owoe = owoe.Owoe(self.bot.config["weebsh_token"], self.bot.session)
 
-        types = _get_image_types(bot.config["weebsh_token"])
+        self.bot.loop.create_task(self._finish_init())
 
-        # TODO Add a help field to this mess.
-        for key in types:
+    async def _finish_init(self):
+        """Notice that this does *not* properly handle HTTP status codes."""
+        status_types = await self.owoe.update_image_types()
+        status_tags = await self.owoe.update_image_tags()
+        if status_types or status_tags:
+            await asyncio.sleep(30)
+            await self._finish_init()
+        else:
+            await self._build_commands()
 
-            # Avoid duplicate commands.
-            if key in bot.all_commands.keys():
-                continue
+    async def _build_commands(self):
+        for key in self.owoe.types:
+
+            # Avoid duplicate commands by removing them.
+            if key in self.bot.all_commands.keys():
+                self.bot.remove_command(key)
 
             helptext = f"{key.capitalize()}!"
 
-            async def callback(self, ctx):
-                await _rra(ctx, ctx.command.name)
+            async def callback(self, ctx, *tags):
+                tags = list(tags)
+                for tag in tags:
+                    if tag not in self.owoe.tags:
+                        tags.remove(tag)
+                url_image = await self.owoe.random_image(type_=ctx.command.name, tags=tags)
+                if isinstance(url_image, str):
+                    embed = discord.Embed()
+                    embed.set_image(url=url_image)
+                    embed.set_footer(text="Powered by weeb.sh")
+                    await ctx.send(embed=embed)
+                    return
+                await ctx.send("No image matching your criteria was found.")
 
             # Ew, gross.
             command = commands.command(name=key, help=helptext)(callback)
             command = commands.cooldown(6, 12, commands.BucketType.channel)(command)
             command.instance = self
             setattr(self, key, command)
+            self.bot.add_command(command)
+
+    @commands.command()
+    @commands.cooldown(6, 12, commands.BucketType.channel)
+    async def weebtypes(self, ctx):
+        """List all available weeb.sh types."""
+        embed = discord.Embed(title="List of valid weeb.sh types")
+        embed.description = ", ".join(self.owoe.types)[:2000]
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.cooldown(6, 12, commands.BucketType.channel)
+    async def weebtags(self, ctx):
+        """List all available weeb.sh tags."""
+        embed = discord.Embed(title="List of valid weeb.sh tags")
+        embed.description = ", ".join(self.owoe.tags)[:2000]
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
