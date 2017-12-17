@@ -17,27 +17,62 @@ class Avatar:
     @commands.cooldown(6, 12)
     async def avatar(self, ctx, *, user: str=None):
         """Display a user's avatar.
-        Defaults to displaying the avatar of the user who invoked the command.
 
         * user - A text string that the bot will attempt to use to look up a user.
-        
-        You may also specify a size for the avatar after the username, e.g. avatar kit 512
+
+        You may also specify a size for the. The size must be a power of 2 from 16 to 1024.
+
+        User searches are done with substring matching, so if you're looking for a user called
+        boingtheboingboing, you can simply run for example <prefix> avatar boing, where <prefix>
+        is the bot's prefix. You may also mention the user or supply a user ID.
+
+        Detailed behavior of this command is as follows (assuming you are the one issuing the
+        command).
+
+        * If no arguments are given, the avatar displayed is yours. E.g: kit avatar
+        * If one argument is given and it's a valid size, the avatar displayed is yours, at that
+        size. E.g: <prefix> avatar 512
+        * If one argument is given and it's not a valid size, the bot will try to find a user
+        whose ID or username matches it. E.g: <prefix> avatar b1nzy
+        * If multiple arguments are given, and the final one is a valid size, the bot will try to
+        find a user whose ID or username matches the rest of the arguments, and it will deliver
+        it at the size specified. E.g: <prefix> avatar b1nzy the discord dev 512
+        * If multiple arguments are given, and the final one is not a valid size, the bot will try
+        to find a user whose ID or username matches all of the arguments. If it fails, it will
+        omit the last argument and try searching with the rest of the arguments. If this too fails,
+        the command will fail completely. E.g: <prefix> avatar b1nzy the discord dev
+        * If no valid size is provided and the avatar found is a .gif image, then the URL will
+        have the size parameter removed entirely so that the avatar animates in chat. Otherwise,
+        it defaults to size 1024.
         """
-        size = 1024
+        manual_size = None
         if not user:
             user = ctx.author
-        elif user.isdecimal():
-            size = int(user)
+        elif user.isdecimal() and int(user) in VALID_SIZES:
+            manual_size = int(user)
             user = ctx.author
+        elif user.isdecimal():
+            user = await helpers.member_by_substring(ctx, user)
         else:
             user_minus_last_word, sep, new_size = user.rpartition(" ")
-            if new_size.isdecimal():
+            if new_size.isdecimal() and int(new_size) in VALID_SIZES:
                 user = await helpers.member_by_substring(ctx, user_minus_last_word)
-                size = int(new_size)
+                manual_size = int(new_size)
             else:
-                user = await helpers.member_by_substring(ctx, user)
+                try:
+                    user = await helpers.member_by_substring(ctx, user)
+                except commands.BadArgument:
+                    user = await helpers.member_by_substring(ctx, user_minus_last_word)
         try:
-            await ctx.send(user.avatar_url_as(size=size))
+            if manual_size:
+                url = user.avatar_url_as(size=manual_size)
+            else:
+                url = user.avatar_url
+            if not manual_size and ".gif" in url:
+                url = url.rpartition("?size=")[0]
+            embed = discord.Embed(description=f"Avatar for {user.mention}")
+            embed.set_image(url=url)
+            await ctx.send(embed=embed)
         except discord.InvalidArgument:
             await ctx.send(f"Invalid size. Valid sizes: {VALID_SIZES}")
 
