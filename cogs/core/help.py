@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import discord
 from discord.ext import commands
 
 
@@ -15,8 +14,7 @@ class Help:
         * command_or_cog - The name of a command or cog.
         """
         if not cmds:
-            embed = discord.Embed(title="List of commands")
-            commands_list = {}
+            commands_list = []
             for command in ctx.bot.commands:
                 if command.hidden:
                     continue
@@ -25,13 +23,12 @@ class Help:
                 except Exception:
                     continue
                 if can_run:
-                    if command.cog_name:
-                        commands_list.setdefault(command.cog_name, []).append(command.name)
-            for key in sorted(list(commands_list.keys())):  # TODO Not scalable past 25 cogs
-                embed.add_field(name=key, value=", ".join(sorted(commands_list[key])))
-            embed.set_footer(text=(f"Run \"{ctx.invoked_with} command\" for "
-                                   "more details on a command."))
-            await ctx.send(embed=embed)
+                    commands_list.append(command.name)
+            commands_list.sort()
+            help_text = f'```{", ".join(commands_list)}```'
+            help_text += f"\nRun **help command** for more details on a command."
+            help_text = "**List of commands:**\n" + help_text
+            await ctx.send(help_text)
         else:
             # This is awful, haha
             await ctx.bot.all_commands["old_help"].callback(ctx, *cmds)
