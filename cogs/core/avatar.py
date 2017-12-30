@@ -41,15 +41,13 @@ class Avatar:
         to find a user whose ID or username matches all of the arguments. If it fails, it will
         omit the last argument and try searching with the rest of the arguments. If this too fails,
         the command will fail completely. E.g: <prefix> avatar b1nzy the discord dev
-        * If no valid size is provided and the avatar found is a .gif image, then the URL will
-        have the size parameter removed entirely so that the avatar animates in chat. Otherwise,
-        it defaults to size 1024.
+        * .gif avatars have fudged URLs so that they animate correctly in the client.
         """
-        manual_size = None
+        size = 1024  # Default size.
         if not user:
             user = ctx.author
         elif user.isdecimal() and int(user) in VALID_SIZES:
-            manual_size = int(user)
+            size = int(user)
             user = ctx.author
         elif user.isdecimal():
             user = await helpers.member_by_substring(ctx, user)
@@ -57,19 +55,16 @@ class Avatar:
             user_minus_last_word, sep, new_size = user.rpartition(" ")
             if new_size.isdecimal() and int(new_size) in VALID_SIZES:
                 user = await helpers.member_by_substring(ctx, user_minus_last_word)
-                manual_size = int(new_size)
+                size = int(new_size)
             else:
                 try:
                     user = await helpers.member_by_substring(ctx, user)
                 except commands.BadArgument:
                     user = await helpers.member_by_substring(ctx, user_minus_last_word)
         try:
-            if manual_size:
-                url = user.avatar_url_as(size=manual_size)
-            else:
-                url = user.avatar_url
-            if not manual_size and ".gif" in url:
-                url = url.rpartition("?size=")[0]
+            url = user.avatar_url_as(size=size)
+            if ".gif" in url:
+                url = url + "&f=.gif"
             embed = discord.Embed(description=f"Avatar for {user.mention}")
             embed.set_image(url=url)
             await ctx.send(embed=embed)
