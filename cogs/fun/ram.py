@@ -97,6 +97,19 @@ class Ram:
         embed.description = ", ".join(self.owoe.tags)[:2000]
         await ctx.send(embed=embed)
 
+    @commands.command()
+    @commands.cooldown(6, 12, commands.BucketType.channel)
+    async def weebtag(self, ctx, *set_of_tags):
+        """Get a weeb.sh image by tag only."""
+        url_image = await self.owoe.random_image(tags=set_of_tags)
+        if isinstance(url_image, str):
+            embed = discord.Embed()
+            embed.set_image(url=url_image)
+            embed.set_footer(text="Powered by weeb.sh")
+            await ctx.send(embed=embed)
+            return
+        await ctx.send("No image matching your criteria was found.")
+
 
 def setup(bot):
     """Setup function for reaction images."""
