@@ -89,27 +89,24 @@ class Ram:
         embed.description = ", ".join(self.owoe.types)[:2000]
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(aliases=["wt", "weebtag"])
     @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def weebtags(self, ctx):
-        """List all available weeb.sh tags."""
-        embed = discord.Embed(title="List of valid weeb.sh tags")
-        embed.description = ", ".join(self.owoe.tags)[:2000]
-        embed.set_footer(text="Use the weebtag command to fetch an image by tags only.")
-        await ctx.send(embed=embed)
-
-    @commands.command(aliases=["wt"])
-    @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def weebtag(self, ctx, *set_of_tags):
-        """Get a weeb.sh image by tag only."""
-        url_image = await self.owoe.random_image(tags=set_of_tags)
-        if isinstance(url_image, str):
-            embed = discord.Embed()
-            embed.set_image(url=url_image)
-            embed.set_footer(text="Powered by weeb.sh")
+    async def weebtags(self, ctx, *set_of_tags):
+        """List all available weeb.sh tags, or fetch an image by tag."""
+        if not set_of_tags:
+            embed = discord.Embed(title="List of valid weeb.sh tags")
+            embed.description = ", ".join(self.owoe.tags)[:2000]
+            embed.set_footer(text="You can use this command to fetch images by tags.")
             await ctx.send(embed=embed)
-            return
-        await ctx.send("No image matching your criteria was found.")
+        else:
+            url_image = await self.owoe.random_image(tags=set_of_tags)
+            if isinstance(url_image, str):
+                embed = discord.Embed()
+                embed.set_image(url=url_image)
+                embed.set_footer(text="Powered by weeb.sh")
+                await ctx.send(embed=embed)
+                return
+            await ctx.send("No image matching your criteria was found.")
 
 
 def setup(bot):
