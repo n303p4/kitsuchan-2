@@ -95,9 +95,10 @@ class Ram:
         """List all available weeb.sh tags."""
         embed = discord.Embed(title="List of valid weeb.sh tags")
         embed.description = ", ".join(self.owoe.tags)[:2000]
+        embed.set_footer(text="Use the weebtag command to fetch an image by tags only.")
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(aliases=["wt"])
     @commands.cooldown(6, 12, commands.BucketType.channel)
     async def weebtag(self, ctx, *set_of_tags):
         """Get a weeb.sh image by tag only."""
