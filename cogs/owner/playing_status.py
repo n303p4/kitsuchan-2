@@ -12,7 +12,10 @@ def setup(bot):
     async def when_ready():
         """Conduct preparations once the bot is ready to go."""
 
-        name = f"Type {bot.config.get('prefix', f'@{bot.user.name}')} help for help!"
+        prefix_choice = bot.config.get('prefix', f'@{bot.user.name}')
+        if len(prefix_choice) > 1:  # No space used for single-character prefixes.
+            prefix_choice += " "
+        name = f"Type {prefix_choice}help for help!"
         game = discord.Game(name=name)
 
         await bot.change_presence(status=discord.Status.online, game=game)
