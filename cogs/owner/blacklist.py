@@ -49,17 +49,17 @@ class Blacklisting:
     async def prune_guilds(self, ctx):
         """Automatically leave guilds."""
         number = 0
-        messages = []
+        paginator = commands.Paginator()
         for guild in self.bot.guilds:
             reason = await self.prune_guild(guild)
             if reason:
                 message = (f"Automatically left guild {guild.name} ({guild.id}) "
                            f"(reason: {reason})")
                 logger.info(message)
-                messages.append(message)
+                paginator.add_line(message)
                 number += 1
-        if messages:
-            await ctx.send("```" + "\n".join(messages) + "```")
+        for page in paginator.pages:
+            await ctx.send(page)
         if number > 0:
             message = f"{number} guilds were pruned."
             logger.info(message)
