@@ -9,7 +9,7 @@ import random
 from discord.ext import commands
 
 URL_RANDOM_DOG_API = "https://random.dog/woof.json"
-URL_RANDOM_CAT_API = "https://random.cat/meow"
+URL_RANDOM_CAT_API = "https://aws.random.cat/meow"
 URL_RANDOM_BIRB = "https://random.birb.pw/img/{0}"
 URL_RANDOM_BIRB_API = "https://random.birb.pw/tweet.json/"
 URL_RANDOM_NEKO_API = "https://nekos.life/api/neko"
@@ -35,6 +35,7 @@ class RandomFun:
 
     @commands.command(aliases=["feline"])
     @commands.cooldown(6, 12)
+    @commands.is_owner()
     async def cat(self, ctx):
         """Fetch a random cat."""
         async with ctx.bot.session.get(URL_RANDOM_CAT_API) as response:
