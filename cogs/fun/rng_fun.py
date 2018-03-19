@@ -35,9 +35,11 @@ class RandomFun:
 
     @commands.command(aliases=["feline"])
     @commands.cooldown(6, 12)
-    @commands.is_owner()
     async def cat(self, ctx):
         """Fetch a random cat."""
+        message = "Command disabled. Please read this: http://random.cat/help.html"
+        await ctx.send(message)
+        return
         async with ctx.bot.session.get(URL_RANDOM_CAT_API) as response:
             if response.status == 200:
                 data = await response.text()
