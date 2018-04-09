@@ -24,7 +24,6 @@ def setup(bot):
     async def handle_error(ctx, exc):
         """Simple error handler."""
         if isinstance(exc, commands.MissingRequiredArgument):
-            param = exc.param.replace("_", " ")
-            await ctx.send(f"Please specify a {param} for this command to work.")
+            await ctx.send(f"Required parameter `{exc.param}` is missing.")
         elif not isinstance(exc, (commands.CommandNotFound, IsNotHuman)):
             await ctx.send(exc)
