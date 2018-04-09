@@ -13,7 +13,7 @@ roleconverter = commands.RoleConverter()
 
 
 async def yes_no(ctx: commands.Context,
-                 message: str="Are you sure? Type **yes** within 10 seconds to confirm. o.o"):
+                 message: str = "Are you sure? Type **yes** within 10 seconds to confirm. o.o"):
     """Yes no helper. Ask a confirmation message with a timeout of 10 seconds.
 
     ctx - The context in which the question is being asked.
@@ -33,8 +33,8 @@ async def yes_no(ctx: commands.Context,
 
 
 async def input_number(ctx: commands.Context,
-                       message: str="Please enter a number within 10 seconds.",
-                       *, timeout: int=10, min_value: int=None, max_value: int=None):
+                       message: str = "Please enter a number within 10 seconds.",
+                       *, timeout: int = 10, min_value: int = None, max_value: int = None):
     """Input number helper. Ask a confirmation message with a timeout of 10 seconds.
 
     ctx - The context in which the question is being asked.

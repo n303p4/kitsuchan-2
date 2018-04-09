@@ -50,8 +50,8 @@ class Memes:
                         image_url = embed.url
                         break
                     elif (embed.type == "rich" and
-                            embed.image is not discord.Embed.Empty and
-                            embed.footer.text != self.footer_text):
+                          embed.image is not discord.Embed.Empty and
+                          embed.footer.text != self.footer_text):
                         image_url = embed.image.url
                         break
             elif message.attachments:

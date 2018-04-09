@@ -39,15 +39,6 @@ class RandomFun:
         """Fetch a random cat."""
         message = "Command disabled. Please read this: http://random.cat/help.html"
         await ctx.send(message)
-        return
-        async with ctx.bot.session.get(URL_RANDOM_CAT_API) as response:
-            if response.status == 200:
-                data = await response.text()
-                catto = json.loads(data)
-                url = catto["file"]
-                await ctx.send(url)
-            else:
-                await ctx.send("Could not reach random.cat. :<")
 
     @commands.command(aliases=["kemonomimi", "catgirl", "kneko", "nekomimi",
                                "foxgirl" "kitsune", "kitsunemimi"])

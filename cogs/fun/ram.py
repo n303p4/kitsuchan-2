@@ -2,19 +2,20 @@
 # pylint: disable=C0103
 
 """Contains a cog for various weeb reaction commands."""
+
 import asyncio
 import random
 
 import discord
-import owoe
 from discord.ext import commands
+import owoe
 
 from k2 import helpers
 
 systemrandom = random.SystemRandom()
 
 
-async def _generate_message(ctx, kind: str=None, user: str=None):
+async def _generate_message(ctx, kind: str = None, user: str = None):
     """Generate a message based on the user."""
     user = await helpers.member_by_substring(ctx, user)
     if not kind or not user:

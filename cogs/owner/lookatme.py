@@ -2,37 +2,36 @@
 
 """Extension that contains a bots.discord.pw server count updater."""
 
-from discord.ext import commands
-
 BASE_URL_DBOTS_API = "https://bots.discord.pw/api/bots/{0}/stats"
 
 
-class LookAtMe:
-    """Contains a command which updates the bot's server count on Discord Bots."""
+async def lookatme(ctx):
+    """Update the bot's server count on bots.discord.pw."""
+    token = ctx.bot.config.get("dbots_token", None)
 
-    @commands.command()
-    @commands.is_owner()
-    async def lookatme(self, ctx):
-        """Update the bot's server count on bots.discord.pw. Bot owner only."""
-        token = ctx.bot.config.get("dbots_token", None)
+    if not token:
+        await ctx.send("No token specified in the config.")
+        return
 
-        if not token:
-            await ctx.send("No token specified in the config.")
-            return
+    url = BASE_URL_DBOTS_API.format(ctx.bot.user.id)
 
-        url = BASE_URL_DBOTS_API.format(ctx.bot.user.id)
+    data = {"server_count": len(ctx.bot.guilds), "shard_id": ctx.bot.shard_id,
+            "shard_count": ctx.bot.shard_count}
+    headers = {"Authorization": token}
 
-        data = {"server_count": len(ctx.bot.guilds), "shard_id": ctx.bot.shard_id,
-                "shard_count": ctx.bot.shard_count}
-        headers = {"Authorization": token}
-
-        async with ctx.bot.session.request("POST", url, json=data, headers=headers) as response:
-            if response.status <= 210:
-                await ctx.send("POSTing OK.")
-            else:
-                await ctx.send("POSTing failed.")
+    async with ctx.bot.session.request("POST", url, json=data, headers=headers):
+        pass
 
 
 def setup(bot):
     """Set up the extension."""
-    bot.add_cog(LookAtMe())
+
+    @bot.listen("on_guild_join")
+    async def handle_guild_join(ctx):
+        """Trigger lookatme on guild join."""
+        await lookatme(ctx)
+
+    @bot.listen("on_guild_remove")
+    async def handle_guild_remove(ctx):
+        """Trigger lookatme on guild leave."""
+        await lookatme(ctx)

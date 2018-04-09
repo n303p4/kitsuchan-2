@@ -33,7 +33,7 @@ class Bot(commands.AutoShardedBot):
         self.config_file = kwargs.get("config_file", "config.json")
         self.session = aiohttp.ClientSession(loop=self.loop)
 
-    def load_config(self, filename: str=None):
+    def load_config(self, filename: str = None):
         """Load config from a JSON file.
 
         * `filename` - The filename of the JSON file to be loaded. If not specified, the bot will
@@ -47,7 +47,7 @@ class Bot(commands.AutoShardedBot):
             for key, value in config.items():
                 self.config[key] = value
 
-    def save_config(self, filename: str=None):
+    def save_config(self, filename: str = None):
         """Save config to a JSON file.
 
         * `filename` - The filename of the JSON file to be saved to. If not specified, the bot will

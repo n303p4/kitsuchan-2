@@ -140,7 +140,7 @@ class About:
     @commands.command(brief="Display user info.", aliases=["user", "uinfo"])
     @commands.guild_only()
     @commands.cooldown(6, 12)
-    async def userinfo(self, ctx, *, user: str=None):
+    async def userinfo(self, ctx, *, user: str = None):
         """Display information about a user, such as status and roles.
         Defaults to the user who invoked the command.
 

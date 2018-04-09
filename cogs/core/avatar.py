@@ -15,7 +15,7 @@ class Avatar:
 
     @commands.command()
     @commands.cooldown(6, 12)
-    async def avatar(self, ctx, *, user: str=None):
+    async def avatar(self, ctx, *, user: str = None):
         """Display a user's avatar.
 
         * user - A text string that the bot will attempt to use to look up a user.

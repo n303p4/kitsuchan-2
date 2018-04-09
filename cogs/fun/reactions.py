@@ -19,7 +19,7 @@ EMOJIS_KILL = (":gun:", ":knife:", ":eggplant:", ":bear:", ":fox:", ":wolf:", ":
                ":broken_heart:", ":crossed_swords:", ":fire:")
 
 
-async def _generate_message(ctx, kind: str=None, user: str=None):
+async def _generate_message(ctx, kind: str = None, user: str = None):
     """Generate a message based on the user."""
     user = await helpers.member_by_substring(ctx, user)
     if not kind or not user:
@@ -36,7 +36,7 @@ async def _generate_message(ctx, kind: str=None, user: str=None):
     return message
 
 
-async def _send_image(ctx, url_image, message: str=""):
+async def _send_image(ctx, url_image, message: str = ""):
     """A helper function that creates an embed with an image and sends it off."""
     if isinstance(url_image, (tuple, list)):
         url_image = systemrandom.choice(url_image)

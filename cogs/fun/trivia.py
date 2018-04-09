@@ -18,8 +18,8 @@ systemrandom = random.SystemRandom()
 
 
 async def input_number(ctx: commands.Context,
-                       message: str="Please enter a number within 10 seconds.",
-                       *, timeout: int=10, min_value: int=None, max_value: int=None):
+                       message: str = "Please enter a number within 10 seconds.",
+                       *, timeout: int = 10, min_value: int = None, max_value: int = None):
     """Number input helper, with timeout.
 
     * ctx - The context in which the question is being asked.
@@ -97,8 +97,8 @@ class Trivia:
 
                 paginator = commands.Paginator(prefix="```markdown")
 
-                for index in range(len(choices)):
-                    paginator.add_line(f"{index+1}. {choices[index]}")
+                for index, value in enumerate(choices):
+                    paginator.add_line(f"{index+1}. {value}")
 
                 embed.add_field(name="Options", value=paginator.pages[0])
 

@@ -7,14 +7,11 @@ from discord.ext import commands
 
 
 class Sharding:
-    """Commands that are only for the bot owner.
-
-    These commands will not show up in the help unless you're the owner.
-    """
+    """Shard information command. Bot owner only, used for diagnostics."""
 
     @commands.command()
     @commands.is_owner()
-    async def shardinfo(self, ctx, shard_id: int=None):
+    async def shardinfo(self, ctx):
         embed = discord.Embed(title="Shard information")
         embed.add_field(name="Number of shards", value=ctx.bot.shard_count)
         embed.add_field(name="Shard serving this guild (first shard is 0)",

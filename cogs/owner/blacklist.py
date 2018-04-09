@@ -113,7 +113,7 @@ class Blacklisting:
             message = f"{user_id} blocked."
             logger.info(message)
             await ctx.send(message)
-            await self.prune_guilds()
+            await self.prune_guilds(ctx)
         else:
             message = f"{user_id} already blocked."
             logger.info(message)
