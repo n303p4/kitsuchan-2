@@ -4,11 +4,13 @@
 
 import json
 
-import aiohttp
-from discord.ext import commands
+import multio
+from curious.core.client import Client
+
+multio.init("curio")
 
 
-class Bot(commands.AutoShardedBot):
+class Bot(Client):
     """A custom bot object that provides a configuration handler and an aiohttp ClientSession.
 
     This is similar to k3.
@@ -28,10 +30,11 @@ class Bot(commands.AutoShardedBot):
         * `config` - A `dict` containing key-value pairs meant for bot configuration. This doesn't
                      really have to be used, but it's there for convenience reasons.
         """
-        super().__init__(*args, **kwargs)
         self.config = {}
         self.config_file = kwargs.get("config_file", "config.json")
-        self.session = aiohttp.ClientSession(loop=self.loop)
+
+    def initialize_token(self, token):
+        super().__init__(token)
 
     def load_config(self, filename: str = None):
         """Load config from a JSON file.
