@@ -25,8 +25,7 @@ class About:
 
         embed.set_thumbnail(url=ctx.bot.user.avatar_url_as(format="png", size=128))
 
-        if k2:
-            embed.add_field(name="Version", value=k2.version)
+        embed.add_field(name="Version", value=k2.version)
 
         ainfo = await ctx.bot.application_info()
         owner = str(ainfo.owner)
@@ -47,8 +46,7 @@ class About:
         usage_memory = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000, 2)
         embed.add_field(name="Cookies eaten", value=f"{usage_memory} megabites")
 
-        if k2:
-            embed.add_field(name="Github", value=k2.url, inline=False)
+        embed.add_field(name="Github", value=k2.url, inline=False)
 
         await ctx.send(embed=embed)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # pylint: disable=C0103
 
-# TODO Audit this code later for cleanup.
+"""Trivia module with a trivia command."""
 
 import html
 import random
