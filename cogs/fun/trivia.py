@@ -10,45 +10,13 @@ import asyncio
 import discord
 from discord.ext import commands
 
+from k2.helpers import input_number
+
 URL_NUMBERS_API = "http://numbersapi.com/{0}/{1}"
 OPTIONS_NUMBERS_API = ["math", "trivia"]
 URL_TRIVIA_API = "https://opentdb.com/api.php?amount=1"
 
 systemrandom = random.SystemRandom()
-
-
-async def input_number(ctx: commands.Context,
-                       message: str = "Please enter a number within 10 seconds.",
-                       *, timeout: int = 10, min_value: int = None, max_value: int = None):
-    """Number input helper, with timeout.
-
-    * ctx - The context in which the question is being asked.
-    * message - Optional messsage that the question should ask.
-    * timeout - Timeout, in seconds, before automatically failing. Defaults to 10.
-    * min_value - Minimum accepted value for the input. Defaults to None.
-    * max_value - Maximum accepted value for the input. Defaults to None.
-    """
-    await ctx.send(message)
-
-    def check(message):
-        """The check function used in bot.wait_for()."""
-        if message.author != ctx.message.author or not message.clean_content.isdecimal():
-            return False
-
-        number = int(message.clean_content)
-
-        if (min_value and number < min_value) or (max_value and number > max_value):
-            return False
-
-        return True
-
-    try:
-        message = await ctx.bot.wait_for("message", timeout=timeout, check=check)
-
-    except asyncio.TimeoutError:
-        raise commands.UserInputError("Timed out waiting.")
-
-    return int(message.clean_content)
 
 
 class Trivia:
