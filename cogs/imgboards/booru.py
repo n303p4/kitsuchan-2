@@ -10,8 +10,9 @@ import urllib.parse
 import asks
 from bs4 import BeautifulSoup
 from curious.commands.context import Context
-from curious.commands.decorators import command
+from curious.commands.decorators import command, ratelimit
 from curious.commands.plugin import Plugin
+from curious.commands.ratelimit import BucketNamer
 from curious.dataclasses.embed import Embed
 
 systemrandom = random.SystemRandom()
@@ -69,6 +70,7 @@ class Booru(Plugin):
     """Imageboard lookup commands."""
 
     @command(aliases=["meido"])
+    @ratelimit(limit=6, time=12, bucket_namer=BucketNamer.GLOBAL)
     async def maid(self, ctx: Context, *, tags=""):
         """Find a random maid. Optional tags."""
         result = await _booru(BASE_URLS["safebooru"]["api"], f"maid {tags}")
@@ -79,6 +81,7 @@ class Booru(Plugin):
             await ctx.channel.messages.send(embed=embed)
 
     @command(aliases=["animememe"])
+    @ratelimit(limit=6, time=12, bucket_namer=BucketNamer.GLOBAL)
     async def animeme(self, ctx: Context, *, tags=""):
         """Find a random anime meme. Optional tags."""
         result = await _booru(BASE_URLS["safebooru"]["api"], f"meme {tags}")
@@ -89,6 +92,7 @@ class Booru(Plugin):
             await ctx.channel.messages.send(embed=embed)
 
     @command(name=":<")
+    @ratelimit(limit=6, time=12, bucket_namer=BucketNamer.GLOBAL)
     async def colonlessthan(self, ctx: Context, *, tags=""):
         """:<"""
         result = await _booru(BASE_URLS["safebooru"]["api"], f":< {tags}")
@@ -99,6 +103,7 @@ class Booru(Plugin):
             await ctx.channel.messages.send(embed=embed)
 
     @command(aliases=["sbooru", "sb"])
+    @ratelimit(limit=6, time=12, bucket_namer=BucketNamer.GLOBAL)
     async def safebooru(self, ctx: Context, *, tags=""):
         """Fetch a random image from Safebooru. Tags accepted.
 

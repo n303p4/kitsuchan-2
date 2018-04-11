@@ -79,7 +79,7 @@ async def member_by_substring(ctx: Context, substring: str):
     """This searches for a member by substrings."""
     try:
         return await convert_member(None, ctx, substring)
-    except Exception:
+    except Exception:  # TODO Fix this.
         pass
     substring = substring.lower()
     for member in itertools.chain(ctx.guild.online_members, ctx.guild.offline_members):

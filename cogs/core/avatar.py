@@ -7,6 +7,7 @@ import traceback
 from curious.commands.context import Context
 from curious.commands.decorators import command, ratelimit
 from curious.commands.plugin import Plugin
+from curious.commands.ratelimit import BucketNamer
 from curious.dataclasses.embed import Embed
 
 from k2 import helpers
@@ -18,7 +19,7 @@ class Avatar(Plugin):
     """Avatar commands."""
 
     @command()
-    @ratelimit(limit=6, time=12)
+    @ratelimit(limit=6, time=12, bucket_namer=BucketNamer.GLOBAL)
     async def avatar(self, ctx: Context, *, user: str = None):
         """Display a user's avatar.
 
@@ -77,7 +78,7 @@ class Avatar(Plugin):
             await ctx.channel.messages.send(f"Invalid size. Valid sizes: {VALID_SIZES}")
 
     @command(aliases=["gicon", "servericon", "sicon"])
-    @ratelimit(limit=6, time=12)
+    @ratelimit(limit=6, time=12, bucket_namer=BucketNamer.GLOBAL)
     async def guildicon(self, ctx):
         """Display the icon of the current guild."""
         await ctx.channel.messages.send(ctx.guild.icon_url)
