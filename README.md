@@ -8,12 +8,16 @@
 with a focus on high quality code. This is a continuation and significant overhaul of the bot
 called **Kitsuchan-NG**, built with the intent of sleekening the codebase.
 
-## How to run k2
+# How to run k2
 
 k2 requires Python 3.6 or higher, as well as `discord.py` `rewrite`. This is a requirement, not
-just a recommendation. If you get a syntax error, that's because you're running Python 3.5 or
-older. As of July 2017, many Linux distributions do not have Python 3.6 by default, so you might
+just a recommendation. If you get an error, that's because you're running Python 3.5 or older.
+As of July 2017, many Linux distributions do not have Python 3.6 by default, so you might
 have to install it specifically.
+
+It is suggested that you use Fedora or Arch Linux if you use a Linux host for the bot, as these
+distributions ships recent software versions by default, and Kitsuchan's version requirements can
+be fairly aggressive.
 
 The bot should include a sample configuration file called `config.example.json`. Rename it to
 `config.json` and fill it out accordingly. Then in a terminal, run:
@@ -22,6 +26,11 @@ The bot should include a sample configuration file called `config.example.json`.
 python3 -m pip install --user -r requirements.txt
 python3 kitsuchan.py
 ```
+
+You may have to change the above commands slightly, depending on your operating system and the
+location of your Python install.
+
+# FAQs
 
 ## Where are all the features? The old bot has way more stuff than this.
 
@@ -32,17 +41,19 @@ cleaned up.
 
 ## What's the point? Isn't k3 going to replace k2 anyway?
 
-k3 is meant for a different sort of bot - one that can easily be ported across different chat
-protocols, but often at the expense of deeper integration. k2 is a Discord bot first and foremost,
-and that gives it the ability to use many Discord-specific features that k3 cannot (at least
-currently) take advantage of. This may change in the future as k3 matures, but it's not the case
-yet. That being said, the development of this bot is closely tied with that of k3.
+Actually, it isn't. k3 is currently dormant, as I don't have the time or care to continue working
+on it at the moment. If I have a use for it again sometime in the future, then work will resume.
+For now, development efforts are focused on k2.
 
 ## You're inconsistent with naming. Is there a particular way to spell this bot's name?
 
 Nope. I'm terrible at that stuff, so use whatever you will. It's not like I can stop you anyway.
 Kitsuchan 2, kitsuchan2, k2, K2, Kaytoo, etc.
 
-## License
+# I want to help! How can I contribute?
 
-See `LICENSE.txt` for details on that.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for details.
+
+# License
+
+See [`LICENSE.txt`](LICENSE.txt).
