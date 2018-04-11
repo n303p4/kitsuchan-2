@@ -66,14 +66,14 @@ class Avatar(Plugin):
                     user = await helpers.member_by_substring(ctx, user)
                 except Exception:
                     user = await helpers.member_by_substring(ctx, user_minus_last_word)
-        try:
+        if size in VALID_SIZES:
             url = str(user.user.avatar_url.with_size(size))
             if ".gif" in url:
                 url = url + "&f=.gif"
             embed = Embed(description=f"Avatar for {user.mention}")
             embed.set_image(image_url=url)
             await ctx.channel.messages.send(embed=embed)
-        except Exception:
+        else:
             traceback.print_exc()
             await ctx.channel.messages.send(f"Invalid size. Valid sizes: {VALID_SIZES}")
 
