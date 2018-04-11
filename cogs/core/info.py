@@ -152,8 +152,8 @@ class About:
         embed.colour = user.color
 
         embed.description = str(user.id)
-        if user.game:
-            embed.description += f" | Playing **{user.game}**"
+        if user.activity:
+            embed.description += f" | Playing **{user.activity}**"
 
         embed.set_thumbnail(url=user.avatar_url_as(format="png", size=128))
 
