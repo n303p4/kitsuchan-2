@@ -7,9 +7,12 @@ import re
 import random
 import urllib.parse
 
+import asks
 from bs4 import BeautifulSoup
-import discord
-from discord.ext import commands
+from curious.commands.context import Context
+from curious.commands.decorators import command
+from curious.commands.plugin import Plugin
+from curious.dataclasses.embed import Embed
 
 systemrandom = random.SystemRandom()
 
@@ -20,7 +23,7 @@ MAX_LENGTH_TAGS = 200
 TAGS_BLACKLIST = ["loli", "shota", "lolicon", "shotacon", "scat"]
 
 
-async def _booru(session, base_url_api: str, tags: str="", blacklist: list=None):
+async def _booru(base_url_api: str, tags: str = "", blacklist: list = None):
     """Generic helper command that can handle most 'booru-type sites.
 
     * site - The site to check.
@@ -32,75 +35,71 @@ async def _booru(session, base_url_api: str, tags: str="", blacklist: list=None)
         tags += f" -{tag}"
     params = urllib.parse.urlencode({"page": "dapi", "s": "post", "q": "index", "tags": tags})
     url = base_url_api.format(params)
-    async with session.get(url) as response:
-        if response.status == 200:
-            xml = await response.text()
-            soup = BeautifulSoup(xml)
-            posts = soup.find_all("post")
-            if not posts:
-                return ("No results found. Make sure you're using "
-                        "standard booru-type tags, such as "
-                        "fox_ears or red_hair.")
-            post = systemrandom.choice(posts)
-            return post
-        else:
-            message = "Could not reach site; please wait and try again. x.x"
-            return message
+    response = await asks.get(url)
+    if response.status_code == 200:
+        xml = response.content
+        soup = BeautifulSoup(xml, "lxml")
+        posts = soup.find_all("post")
+        if not posts:
+            return ("No results found. Make sure you're using "
+                    "standard booru-type tags, such as "
+                    "fox_ears or red_hair.")
+        post = systemrandom.choice(posts)
+        return post
+    else:
+        message = "Could not reach site; please wait and try again. x.x"
+        return message
 
 
-def _process_post(post, base_url_post: str, max_length_tags: int=MAX_LENGTH_TAGS):
+def _process_post(post, base_url_post: str, max_length_tags: int = MAX_LENGTH_TAGS):
     if re.match("http(s?):\/\/.+", post['sample_url']):
         sample_url = post['sample_url']
     else:
         sample_url = f"https:{post['sample_url']}"
     post_url = base_url_post.format(post["id"])
-    embed = discord.Embed(title=post["id"])
+    embed = Embed(title=post["id"])
     embed.url = post_url
     embed.description = f"[Full-size image](https:{post['file_url']})"
-    embed.set_image(url=sample_url)
+    embed.set_image(image_url=sample_url)
     embed.set_footer(text=post["tags"][:max_length_tags])
     return embed
 
 
-class Booru:
+class Booru(Plugin):
     """Imageboard lookup commands."""
 
-    @commands.command(aliases=["meido"])
-    @commands.cooldown(6, 12)
-    async def maid(self, ctx, *, tags=""):
+    @command(aliases=["meido"])
+    async def maid(self, ctx: Context, *, tags=""):
         """Find a random maid. Optional tags."""
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f"maid {tags}")
+        result = await _booru(BASE_URLS["safebooru"]["api"], f"maid {tags}")
         if isinstance(result, str):
-            await ctx.send(result)
+            await ctx.channel.messages.send(result)
         else:
             embed = _process_post(result, BASE_URLS["safebooru"]["post"])
-            await ctx.send(embed=embed)
+            await ctx.channel.messages.send(embed=embed)
 
-    @commands.command(aliases=["animememe"])
-    @commands.cooldown(6, 12)
-    async def animeme(self, ctx, *, tags=""):
+    @command(aliases=["animememe"])
+    async def animeme(self, ctx: Context, *, tags=""):
         """Find a random anime meme. Optional tags."""
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f"meme {tags}")
+        result = await _booru(BASE_URLS["safebooru"]["api"], f"meme {tags}")
         if isinstance(result, str):
-            await ctx.send(result)
+            await ctx.channel.messages.send(result)
         else:
             embed = _process_post(result, BASE_URLS["safebooru"]["post"])
-            await ctx.send(embed=embed)
+            await ctx.channel.messages.send(embed=embed)
 
-    @commands.command(name=":<")
-    @commands.cooldown(6, 12)
-    async def colonlessthan(self, ctx, *, tags=""):
+    @command(name=":<")
+    async def colonlessthan(self, ctx: Context, *, tags=""):
         """:<"""
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], f":< {tags}")
+        result = await _booru(BASE_URLS["safebooru"]["api"], f":< {tags}")
         if isinstance(result, str):
-            await ctx.send(result)
+            await ctx.channel.messages.send(result)
         else:
             embed = _process_post(result, BASE_URLS["safebooru"]["post"])
-            await ctx.send(embed=embed)
+            await ctx.channel.messages.send(embed=embed)
 
-    @commands.command(aliases=["sbooru", "sb"])
-    @commands.cooldown(6, 12)
-    async def safebooru(self, ctx, *, tags=""):
+    @command(aliases=["sbooru", "sb"])
+    async def safebooru(self, ctx: Context, *, tags=""):
         """Fetch a random image from Safebooru. Tags accepted.
 
         * tags - A list of tags to be used in the search criteria.
@@ -108,14 +107,9 @@ class Booru:
         This command accepts common imageboard tags and keywords.
         See http://safebooru.org/index.php?page=help&topic=cheatsheet for more details.
         """
-        result = await _booru(ctx.bot.session, BASE_URLS["safebooru"]["api"], tags)
+        result = await _booru(BASE_URLS["safebooru"]["api"], tags)
         if isinstance(result, str):
-            await ctx.send(result)
+            await ctx.channel.messages.send(result)
         else:
             embed = _process_post(result, BASE_URLS["safebooru"]["post"])
-            await ctx.send(embed=embed)
-
-
-def setup(bot):
-    """Set up the extension."""
-    bot.add_cog(Booru())
+            await ctx.channel.messages.send(embed=embed)

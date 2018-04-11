@@ -13,7 +13,6 @@ import sys
 
 from curious.commands.manager import CommandsManager
 from curious.core.event import EventContext
-import multio
 
 import k2
 from k2 import core
@@ -55,6 +54,7 @@ if __name__ == "__main__":
     @bot.event("ready")
     async def load_plugins(ctx: EventContext):
         # Automatically load all modules.
+        print("Standby ready.")
         for dirpath, dirnames, filenames in os.walk("cogs"):
             for filename in filenames:
                 if filename.endswith(".py"):

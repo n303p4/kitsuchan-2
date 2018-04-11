@@ -16,8 +16,11 @@ class Bot(Client):
     This is similar to k3.
     """
 
-    def __init__(self, *args, **kwargs):
-        """In addition to everything supported by commands.Bot, this also supports:
+    def __init__(self, **kwargs):
+        """In order for you to be able to initialize the token from config, this bot doesn't
+        immediately initialize upon construction! You have to call `initialize_token` for that.
+
+        In addition to everything supported by commands.Bot, this also supports:
 
         * `config_file` - An `str` representing the configuration file of the bot. Defaults to
                           `config.json`. This doesn't really have to be used, but it's there for
@@ -25,8 +28,6 @@ class Bot(Client):
 
         Instance variables not in the constructor:
 
-        * `session` - An `aiohttp.ClientSession` that the bot can use to make HTTP requests.
-                      This is useful for commands that perform API hooks.
         * `config` - A `dict` containing key-value pairs meant for bot configuration. This doesn't
                      really have to be used, but it's there for convenience reasons.
         """
