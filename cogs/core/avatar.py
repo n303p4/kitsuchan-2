@@ -2,20 +2,24 @@
 
 """Contains a cog that fetches user avatars."""
 
-import discord
-from discord.ext import commands
+import traceback
+
+from curious.commands.context import Context
+from curious.commands.decorators import command, ratelimit
+from curious.commands.plugin import Plugin
+from curious.dataclasses.embed import Embed
 
 from k2 import helpers
 
 VALID_SIZES = [16, 32, 64, 128, 256, 512, 1024]
 
 
-class Avatar:
+class Avatar(Plugin):
     """Avatar commands."""
 
-    @commands.command()
-    @commands.cooldown(6, 12)
-    async def avatar(self, ctx, *, user: str = None):
+    @command()
+    @ratelimit(limit=6, time=12)
+    async def avatar(self, ctx: Context, *, user: str = None):
         """Display a user's avatar.
 
         * user - A text string that the bot will attempt to use to look up a user.
@@ -59,25 +63,21 @@ class Avatar:
             else:
                 try:
                     user = await helpers.member_by_substring(ctx, user)
-                except commands.BadArgument:
+                except Exception:
                     user = await helpers.member_by_substring(ctx, user_minus_last_word)
         try:
-            url = user.avatar_url_as(size=size)
+            url = str(user.user.avatar_url.with_size(size))
             if ".gif" in url:
                 url = url + "&f=.gif"
-            embed = discord.Embed(description=f"Avatar for {user.mention}")
-            embed.set_image(url=url)
-            await ctx.send(embed=embed)
-        except discord.InvalidArgument:
-            await ctx.send(f"Invalid size. Valid sizes: {VALID_SIZES}")
+            embed = Embed(description=f"Avatar for {user.mention}")
+            embed.set_image(image_url=url)
+            await ctx.channel.messages.send(embed=embed)
+        except Exception:
+            traceback.print_exc()
+            await ctx.channel.messages.send(f"Invalid size. Valid sizes: {VALID_SIZES}")
 
-    @commands.command(aliases=["gicon", "servericon", "sicon"])
-    @commands.cooldown(6, 12)
+    @command(aliases=["gicon", "servericon", "sicon"])
+    @ratelimit(limit=6, time=12)
     async def guildicon(self, ctx):
         """Display the icon of the current guild."""
-        await ctx.send(ctx.guild.icon_url)
-
-
-def setup(bot):
-    """Set up the extension."""
-    bot.add_cog(Avatar())
+        await ctx.channel.messages.send(ctx.guild.icon_url)

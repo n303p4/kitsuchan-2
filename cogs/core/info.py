@@ -5,43 +5,39 @@
 import resource
 import sys
 
-import discord
-from discord.ext import commands
+import curious
+from curious.commands.context import Context
+from curious.commands.decorators import command
+from curious.commands.plugin import Plugin
+from curious.dataclasses.embed import Embed
+from curious.dataclasses.member import Member
 
 import k2
-from k2 import helpers
 
 
-class About:
+class About(Plugin):
     """Commands that display information about the bot, user, etc."""
 
-    @commands.command(aliases=["botinfo", "binfo", "about", "stats"])
-    @commands.cooldown(6, 12)
-    async def info(self, ctx):
+    @command(aliases=["botinfo", "binfo", "about", "stats"])
+    async def info(self, ctx: Context):
         """Display bot info, e.g. library versions."""
 
-        embed = discord.Embed()
+        embed = Embed()
         embed.description = ctx.bot.description
 
-        embed.set_thumbnail(url=ctx.bot.user.avatar_url_as(format="png", size=128))
+        embed.set_thumbnail(url=ctx.bot.user.avatar_url.as_format("png").with_size(128))
 
         embed.add_field(name="Version", value=k2.version)
 
-        ainfo = await ctx.bot.application_info()
-        owner = str(ainfo.owner)
-        embed.add_field(name="Owner", value=owner)
-
-        embed.add_field(name="# of commands", value=len(ctx.bot.commands))
-
-        if ctx.guild and ctx.bot.shard_count > 1:
-            embed.add_field(name="Shard", value=f"{ctx.guild.shard_id+1} of {ctx.bot.shard_count}")
+        if ctx.guild and ctx.bot.get_shard_count() > 1:
+            embed.add_field(name="Shard count", value=f"{ctx.bot.get_shard_count()}")
 
         num_guilds = len(ctx.bot.guilds)
         num_users = sum(not member.bot for member in ctx.bot.get_all_members())
         embed.add_field(name="Serving", value=f"{num_users} people in {num_guilds} guilds")
 
         embed.add_field(name="Python", value="{0}.{1}.{2}".format(*sys.version_info))
-        embed.add_field(name="discord.py", value=discord.__version__)
+        embed.add_field(name="discord.py", value=curious.__version__)
 
         usage_memory = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000, 2)
         embed.add_field(name="Cookies eaten", value=f"{usage_memory} megabites")
@@ -50,16 +46,14 @@ class About:
 
         await ctx.send(embed=embed)
 
-    @commands.command(brief="Display guild (server) info.",
-                      aliases=["guild", "ginfo", "server", "serverinfo", "sinfo"])
-    @commands.guild_only()
-    @commands.cooldown(6, 12)
-    async def guildinfo(self, ctx):
+    @command(brief="Display guild (server) info.",
+             aliases=["guild", "ginfo", "server", "serverinfo", "sinfo"])
+    async def guildinfo(self, ctx: Context):
         """Display information about the current guild, such as owner, region, emojis, and roles."""
 
         guild = ctx.guild
 
-        embed = discord.Embed(title=guild.name)
+        embed = Embed(title=guild.name)
         embed.description = guild.id
 
         embed.set_thumbnail(url=guild.icon_url)
@@ -77,10 +71,8 @@ class About:
 
         await ctx.send(embed=embed)
 
-    @commands.command(brief="Display channel info.", aliases=["channel", "cinfo"])
-    @commands.guild_only()
-    @commands.cooldown(6, 12)
-    async def channelinfo(self, ctx, *, channel: discord.TextChannel=None):
+    @command(brief="Display channel info.", aliases=["channel", "cinfo"])
+    async def channelinfo(self, ctx: Context):
         """Display information about a text channel.
         Defaults to the current channel.
 
@@ -89,7 +81,7 @@ class About:
         # If channel is None, then it is set to ctx.channel.
         channel = channel or ctx.channel
 
-        embed = discord.Embed(title=f"{channel.name}")
+        embed = Embed(title=f"{channel.name}")
 
         try:
             embed.description = channel.topic
@@ -111,16 +103,14 @@ class About:
 
         await ctx.send(embed=embed)
 
-    @commands.command(brief="Display voice channel info.",
-                      aliases=["voicechannel", "vchannel", "vcinfo"])
-    @commands.guild_only()
-    @commands.cooldown(6, 12)
-    async def vchannelinfo(self, ctx, *, channel: discord.VoiceChannel):
+    @command(brief="Display voice channel info.",
+             aliases=["voicechannel", "vchannel", "vcinfo"])
+    async def vchannelinfo(self, ctx: Context):
         """Display information about a voice channel.
 
         * channel - A specific voice channel to get information about."""
 
-        embed = discord.Embed(title=f"{channel.name}")
+        embed = Embed(title=f"{channel.name}")
         embed.add_field(name="Channel ID", value=channel.id)
         try:
             embed.add_field(name="Guild", value=channel.guild.name)
@@ -135,21 +125,17 @@ class About:
         embed.add_field(name="Created at", value=channel.created_at.ctime())
         await ctx.send(embed=embed)
 
-    @commands.command(brief="Display user info.", aliases=["user", "uinfo"])
-    @commands.guild_only()
-    @commands.cooldown(6, 12)
-    async def userinfo(self, ctx, *, user: str = None):
+    @command(brief="Display user info.", aliases=["user", "uinfo"])
+    async def userinfo(self, ctx: Context, *, user: Member = None):
         """Display information about a user, such as status and roles.
         Defaults to the user who invoked the command.
 
         * user - Optional argument. A user in the current channel to get user information about."""
         if not user:
             user = ctx.author
-        else:
-            user = await helpers.member_by_substring(ctx, user)
 
-        embed = discord.Embed(title=f"{str(user)}")
-        embed.colour = user.color
+        embed = Embed(title=f"{str(user)}")
+        embed.colour = user.colour
 
         embed.description = str(user.id)
         if user.game:
@@ -178,8 +164,3 @@ class About:
             embed.add_field(name="Roles", value=roles, inline=False)
 
         await ctx.send(embed=embed)
-
-
-def setup(bot):
-    """Set up the extension."""
-    bot.add_cog(About())

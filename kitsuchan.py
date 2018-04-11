@@ -10,6 +10,7 @@ import os
 import json
 import logging
 import sys
+import traceback
 
 from curious.commands.manager import CommandsManager
 from curious.core.event import EventContext
@@ -65,6 +66,7 @@ if __name__ == "__main__":
                     try:
                         await manager.load_plugins_from(module)
                     except Exception as error:
-                        print(f"Unable to load {module}: {error}")
+                        print(f"Unable to load {module}")
+                        traceback.print_exc()
 
     bot.run()
