@@ -12,6 +12,7 @@ class Sharding:
     @commands.command()
     @commands.is_owner()
     async def shardinfo(self, ctx):
+        """Shard information. Bot owner only."""
         embed = discord.Embed(title="Shard information")
         embed.add_field(name="Number of shards", value=ctx.bot.shard_count)
         embed.add_field(name="Shard serving this guild (first shard is 0)",
