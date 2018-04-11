@@ -16,7 +16,7 @@ As of July 2017, many Linux distributions do not have Python 3.6 by default, so 
 have to install it specifically.
 
 It is suggested that you use Fedora or Arch Linux if you use a Linux host for the bot, as these
-distributions ships recent software versions by default, and Kitsuchan's version requirements can
+distributions ship recent software versions by default, and Kitsuchan's version requirements can
 be fairly aggressive.
 
 The bot should include a sample configuration file called `config.example.json`. Rename it to
