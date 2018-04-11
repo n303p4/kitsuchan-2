@@ -59,7 +59,7 @@ class Ram:
             if key in self.bot.all_commands.keys():
                 self.bot.remove_command(key)
 
-            helptext = f"{key.capitalize()}!"
+            helptext = f"Fetch random {key} image from weeb.sh."
 
             async def callback(self, ctx, *tags):
                 tags = list(tags)
