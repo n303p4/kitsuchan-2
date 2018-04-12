@@ -7,13 +7,19 @@ Requires Python 3.6+ and discord.py rewrite (1.0).
 """
 
 import os
+import json
 import logging
 import sys
 
+import discord
 from discord.ext import commands
 
 import k2
 from k2 import core
+
+assert (os.geteuid() > 0), "Please don't run me as root. :<"
+assert (sys.version_info >= (3, 6)), "I require Python 3.6 or higher. :3"
+assert (discord.version_info >= (1, 0)), "I require discord.py 1.0 or higher. :3"
 
 FORMAT = "%(asctime)-15s %(message)s"
 logging.basicConfig(format=FORMAT)
@@ -22,7 +28,7 @@ logger.setLevel(logging.INFO)
 
 DIRECTORY_PATH = os.path.dirname(os.path.realpath(__file__))
 
-bot = core.Bot(command_prefix="", pm_help=None, config_file="config.json")
+bot = core.Bot(command_prefix="", pm_help=True, config_file="config.json")
 
 
 if __name__ == "__main__":
@@ -30,7 +36,11 @@ if __name__ == "__main__":
     if os.getcwd() != DIRECTORY_PATH and "-d" in sys.argv:
         os.chdir(DIRECTORY_PATH)
 
-    bot.load_config()
+    try:
+        bot.load_config()
+    except json.decoder.JSONDecodeError:
+        print("There seems to be an error in your config.json. Kitsuchan will now halt. :<")
+        sys.exit()
 
     assert (isinstance(bot.config.get("discord_token"), str)), "Bot token not valid."
     assert (isinstance(bot.config.get("module_blacklist", []), list)), "Blacklist must be a list."

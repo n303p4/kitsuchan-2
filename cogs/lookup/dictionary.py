@@ -18,7 +18,7 @@ class Dictionary:
 
     @commands.command()
     @commands.cooldown(6, 12)
-    async def define(self, ctx, word, *args):
+    async def define(self, ctx, word: str):
         """Define a word.
 
         Example usage:

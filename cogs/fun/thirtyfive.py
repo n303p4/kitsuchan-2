@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # pylint: disable=C0103
 
+"""Commands inspired by Roadcrosser's bot 35."""
+
 import random
 
 from discord.ext import commands

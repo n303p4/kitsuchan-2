@@ -2,19 +2,20 @@
 # pylint: disable=C0103
 
 """Contains a cog for various weeb reaction commands."""
+
 import asyncio
 import random
 
 import discord
-import owoe
 from discord.ext import commands
+import owoe
 
 from k2 import helpers
 
 systemrandom = random.SystemRandom()
 
 
-async def _generate_message(ctx, kind: str=None, user: str=None):
+async def _generate_message(ctx, kind: str = None, user: str = None):
     """Generate a message based on the user."""
     user = await helpers.member_by_substring(ctx, user)
     if not kind or not user:
@@ -58,7 +59,7 @@ class Ram:
             if key in self.bot.all_commands.keys():
                 self.bot.remove_command(key)
 
-            helptext = f"{key.capitalize()}!"
+            helptext = f"Fetch random {key} image from weeb.sh."
 
             async def callback(self, ctx, *tags):
                 tags = list(tags)
@@ -89,13 +90,24 @@ class Ram:
         embed.description = ", ".join(self.owoe.types)[:2000]
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(aliases=["wt", "weebtag"])
     @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def weebtags(self, ctx):
-        """List all available weeb.sh tags."""
-        embed = discord.Embed(title="List of valid weeb.sh tags")
-        embed.description = ", ".join(self.owoe.tags)[:2000]
-        await ctx.send(embed=embed)
+    async def weebtags(self, ctx, *set_of_tags):
+        """List all available weeb.sh tags, or fetch an image by tag."""
+        if not set_of_tags:
+            embed = discord.Embed(title="List of valid weeb.sh tags")
+            embed.description = ", ".join(self.owoe.tags)[:2000]
+            embed.set_footer(text="You can use this command to fetch images by tags.")
+            await ctx.send(embed=embed)
+        else:
+            url_image = await self.owoe.random_image(tags=set_of_tags)
+            if isinstance(url_image, str):
+                embed = discord.Embed()
+                embed.set_image(url=url_image)
+                embed.set_footer(text="Powered by weeb.sh")
+                await ctx.send(embed=embed)
+                return
+            await ctx.send("No image matching your criteria was found.")
 
 
 def setup(bot):

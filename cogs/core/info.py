@@ -1,114 +1,185 @@
 #!/usr/bin/env python3
 
-"""Additional informational commands for k2."""
+"""Informational commands."""
+
+import resource
+import sys
 
 import discord
 from discord.ext import commands
 
+import k2
 from k2 import helpers
 
 
-class Information:
-    """Additional informational commands."""
+class About:
+    """Commands that display information about the bot, user, etc."""
 
-    @commands.command(aliases=["rlist"])
-    @commands.guild_only()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def roles(self, ctx):
-        """Display a list of the guild's roles."""
+    @commands.command(aliases=["botinfo", "binfo", "about", "stats"])
+    @commands.cooldown(6, 12)
+    async def info(self, ctx):
+        """Display bot info, e.g. library versions."""
 
-        embed = discord.Embed(title=f"Roles: {len(ctx.guild.roles)}")
-        embed.description = ", ".join([f"{r.name}" for r in ctx.guild.roles])
+        embed = discord.Embed()
+        embed.description = ctx.bot.description
+
+        embed.set_thumbnail(url=ctx.bot.user.avatar_url_as(format="png", size=128))
+
+        embed.add_field(name="Version", value=k2.version)
+
+        ainfo = await ctx.bot.application_info()
+        owner = str(ainfo.owner)
+        embed.add_field(name="Owner", value=owner)
+
+        embed.add_field(name="# of commands", value=len(ctx.bot.commands))
+
+        if ctx.guild and ctx.bot.shard_count > 1:
+            embed.add_field(name="Shard", value=f"{ctx.guild.shard_id+1} of {ctx.bot.shard_count}")
+
+        num_guilds = len(ctx.bot.guilds)
+        num_users = sum(not member.bot for member in ctx.bot.get_all_members())
+        embed.add_field(name="Serving", value=f"{num_users} people in {num_guilds} guilds")
+
+        embed.add_field(name="Python", value="{0}.{1}.{2}".format(*sys.version_info))
+        embed.add_field(name="discord.py", value=discord.__version__)
+
+        usage_memory = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000, 2)
+        embed.add_field(name="Cookies eaten", value=f"{usage_memory} megabites")
+
+        embed.add_field(name="Github", value=k2.url, inline=False)
+
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(brief="Display guild (server) info.",
+                      aliases=["guild", "ginfo", "server", "serverinfo", "sinfo"])
     @commands.guild_only()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def whohas(self, ctx, *, role: str):
-        """Display who has a given role.
+    @commands.cooldown(6, 12)
+    async def guildinfo(self, ctx):
+        """Display information about the current guild, such as owner, region, emojis, and roles."""
 
-        * role - The role to check for.
-        """
+        guild = ctx.guild
 
-        role = await helpers.role_by_substring(ctx, role)
+        embed = discord.Embed(title=guild.name)
+        embed.description = guild.id
 
-        members_with_role = []
-        for member in ctx.guild.members:
-            if role in member.roles:
-                members_with_role.append(member.mention)
-        if not members_with_role:
-            await ctx.send("Nobody has that role. :<")
+        embed.set_thumbnail(url=guild.icon_url)
+
+        embed.add_field(name="Owner", value=str(guild.owner))
+
+        embed.add_field(name="Members", value=len(ctx.guild.members))
+
+        embed.add_field(name="Text channels", value=len(guild.text_channels))
+        embed.add_field(name="Voice channels", value=len(guild.voice_channels))
+        embed.add_field(name="Custom emojis", value=len(guild.emojis) or None)
+        embed.add_field(name="Custom roles", value=len(guild.roles)-1 or None)
+        embed.add_field(name="Region", value=str(guild.region))
+        embed.add_field(name="Created at", value=guild.created_at.ctime())
+
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="Display channel info.", aliases=["channel", "cinfo"])
+    @commands.guild_only()
+    @commands.cooldown(6, 12)
+    async def channelinfo(self, ctx, *, channel: discord.TextChannel=None):
+        """Display information about a text channel.
+        Defaults to the current channel.
+
+        * channel - Optional argument. A specific channel to get information about."""
+
+        # If channel is None, then it is set to ctx.channel.
+        channel = channel or ctx.channel
+
+        embed = discord.Embed(title=f"{channel.name}")
+
+        try:
+            embed.description = channel.topic
+        except AttributeError:
+            pass
+
+        embed.add_field(name="Channel ID", value=channel.id)
+
+        try:
+            embed.add_field(name="Guild", value=channel.guild.name)
+        except AttributeError:
+            pass
+
+        embed.add_field(name="Members", value=len(channel.members))
+        embed.add_field(name="Created at", value=channel.created_at.ctime())
+
+        if channel.is_nsfw():
+            embed.set_footer(text="NSFW content is allowed for this channel.")
+
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="Display voice channel info.",
+                      aliases=["voicechannel", "vchannel", "vcinfo"])
+    @commands.guild_only()
+    @commands.cooldown(6, 12)
+    async def vchannelinfo(self, ctx, *, channel: discord.VoiceChannel):
+        """Display information about a voice channel.
+
+        * channel - A specific voice channel to get information about."""
+
+        embed = discord.Embed(title=f"{channel.name}")
+        embed.add_field(name="Channel ID", value=channel.id)
+        try:
+            embed.add_field(name="Guild", value=channel.guild.name)
+        except AttributeError:
+            pass
+        embed.add_field(name="Bitrate", value=f"{channel.bitrate}bps")
+        if channel.user_limit > 0:
+            user_limit = channel.user_limit
         else:
-            embed = discord.Embed(title=f"Members with {role.name}: {len(members_with_role)}")
-            embed.description = ", ".join(members_with_role[:30])
-            if len(members_with_role) > 30:
-                embed.set_footer(text=f"...and {len(members_with_role)-30} others.")
-            await ctx.send(embed=embed)
+            user_limit = None
+        embed.add_field(name="User limit", value=user_limit)
+        embed.add_field(name="Created at", value=channel.created_at.ctime())
+        await ctx.send(embed=embed)
 
-    @commands.command(brief="Display role info.", aliases=["rinfo"])
+    @commands.command(brief="Display user info.", aliases=["user", "uinfo"])
     @commands.guild_only()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def roleinfo(self, ctx, *, role: str):
-        """Display information about a role.
+    @commands.cooldown(6, 12)
+    async def userinfo(self, ctx, *, user: str = None):
+        """Display information about a user, such as status and roles.
+        Defaults to the user who invoked the command.
 
-        * role - The role to display information about."""
-
-        role = await helpers.role_by_substring(ctx, role)
-
-        embed = discord.Embed(title=role.name)
-        embed.colour = role.color
-        embed.description = f"{role.id} | Members: {len(role.members)}"
-        embed.add_field(name="Color", value=f"{role.color}", inline=False)
-
-        if role.permissions.administrator:
-            embed.add_field(name="Administrator", value=True)
-
+        * user - Optional argument. A user in the current channel to get user information about."""
+        if not user:
+            user = ctx.author
         else:
-            paginator = commands.Paginator(prefix="", suffix="")
+            user = await helpers.member_by_substring(ctx, user)
 
-            for permission, value in role.permissions:
-                if value:
-                    paginator.add_line(str(permission).capitalize().replace("_", " "))
+        embed = discord.Embed(title=f"{str(user)}")
+        embed.colour = user.color
 
-            for page in paginator.pages:
-                embed.add_field(name="Permissions", value=page)
+        embed.description = str(user.id)
+        if user.activity:
+            embed.description += f" | Playing **{user.activity}**"
 
-        await ctx.send(embed=embed)
+        embed.set_thumbnail(url=user.avatar_url_as(format="png", size=128))
 
-    @commands.command(aliases=["elist"])
-    @commands.guild_only()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def emojis(self, ctx):
-        """Display a list of the guild's custom emojis."""
+        embed.add_field(name="Nickname", value=user.nick)
+        embed.add_field(name="Bot user?", value="Yes" if user.bot else "No")
 
-        embed = discord.Embed(title=f"Custom emojis for {ctx.guild.name}")
-        emoji_list = []
-        for emoji in ctx.guild.emojis:
-            emoji_list.append(str(emoji))
-        embed.description = " ".join(emoji_list)
-        await ctx.send(embed=embed)
+        # This is a bit awkward. Basically we don't want the bot to just say Dnd.
+        if user.status.name == "dnd":
+            status = "Do Not Disturb"
+        else:
+            status = user.status.name.capitalize()
+        embed.add_field(name="Status", value=status)
 
-    @commands.command(brief="Display custom emoji info.",
-                      aliases=["emojiinfo", "einfo", "ceinfo"])
-    @commands.guild_only()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def customemojiinfo(self, ctx, *, emoji: discord.Emoji):
-        """Display information for a custom emoji.
+        embed.add_field(name="Color", value=str(user.color))
 
-        * emoji - The emoji to get information about."""
+        embed.add_field(name="Joined guild at", value=user.joined_at.ctime())
+        embed.add_field(name="Joined Discord at", value=user.created_at.ctime())
 
-        embed = discord.Embed(title=emoji.name)
-        embed.description = f"{emoji.id} | [Full image]({emoji.url})"
-
-        embed.add_field(name="Guild", value=f"{emoji.guild.name} ({emoji.guild.id})")
-        embed.add_field(name="Managed", value=emoji.managed)
-        embed.add_field(name="Created at", value=emoji.created_at.ctime())
-
-        embed.set_thumbnail(url=emoji.url)
+        # This is crap.
+        roles = ", ".join((role.name for role in user.roles if not role.is_default()))[:1024]
+        if roles:
+            embed.add_field(name="Roles", value=roles, inline=False)
 
         await ctx.send(embed=embed)
 
 
 def setup(bot):
-    """Setup function for Information."""
-    bot.add_cog(Information())
+    """Set up the extension."""
+    bot.add_cog(About())

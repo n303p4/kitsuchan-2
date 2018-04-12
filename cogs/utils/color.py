@@ -34,7 +34,7 @@ class Color:
 
     @commands.command(aliases=["colour"])
     @commands.cooldown(6, 12)
-    async def color(self, ctx, *, color: str=None):
+    async def color(self, ctx, *, color: str = None):
         """Display a color. Accepts CSS color names and hex input.
 
         * color - Either a CSS color or hex input.
