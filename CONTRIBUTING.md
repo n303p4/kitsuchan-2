@@ -16,6 +16,8 @@ request. If the changes are judged to be acceptable, they'll be merged into the 
 * Use `pylint` for your linting and do your best not to annoy it. Minor warnings are okay, though.
     * For example, global instance variables can be in lowercase. That's fine. Global constants
       should be uppercase, though.
+* In regards to the above, it is **strongly** recommended that you use a text editor with support
+  for linting. It will make your life much easier.
 * Maximum line length is 100 characters.
 * To handle HTTP requests and responses in your commands, use `ctx.bot.session`, which is an
   `aiohttp.ClientSession`. If you're unfamiliar, read up on
