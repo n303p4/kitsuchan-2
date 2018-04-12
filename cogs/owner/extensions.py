@@ -44,8 +44,12 @@ class Extensions:
     async def reloadall(self, ctx):
         """Reload all modules."""
         for extension in list(ctx.bot.extensions):
-            ctx.bot.unload_extension(extension)
-            ctx.bot.load_extension(extension)
+            try:
+                ctx.bot.unload_extension(extension)
+                ctx.bot.load_extension(extension)
+            except Exception as e:
+                await ctx.send((f"Could not reload extension {extension}: "
+                                f"{e}"))
 
         await ctx.send(f"Reloaded all modules.")
 
