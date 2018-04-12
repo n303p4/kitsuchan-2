@@ -22,7 +22,7 @@ async def yes_no(ctx: commands.Context,
     await ctx.send(message)
     try:
         message = await ctx.bot.wait_for("message", timeout=10,
-                                         check=lambda message: message.author == ctx.message.author)
+                                         check=lambda msg: msg.author == ctx.message.author)
     except asyncio.TimeoutError:
         await ctx.send("Timed out waiting. :<")
         return False

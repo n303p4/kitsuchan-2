@@ -28,7 +28,7 @@ class Extensions:
                 return
         await ctx.send(f"{extension_name} is already loaded.")
 
-    @commands.command(aliases=["reload", "rloade"])
+    @commands.group(aliases=["reload", "rloade"], invoke_without_command=True)
     @commands.is_owner()
     async def rload(self, ctx, extension_name: str):
         """Reload an already-loaded extension.
@@ -38,6 +38,16 @@ class Extensions:
         ctx.bot.unload_extension(extension_name)
         ctx.bot.load_extension(extension_name)
         await ctx.send(f"{extension_name} reloaded.")
+
+    @rload.command(name="--all", aliases=["-a"])
+    @commands.is_owner()
+    async def reloadall(self, ctx):
+        """Reload all modules."""
+        for extension in list(ctx.bot.extensions):
+            ctx.bot.unload_extension(extension)
+            ctx.bot.load_extension(extension)
+
+        await ctx.send(f"Reloaded all modules.")
 
     @commands.command(aliases=["unload", "uloade"])
     @commands.is_owner()
