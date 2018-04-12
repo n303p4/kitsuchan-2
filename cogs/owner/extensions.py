@@ -47,9 +47,9 @@ class Extensions:
             try:
                 ctx.bot.unload_extension(extension)
                 ctx.bot.load_extension(extension)
-            except Exception as e:
+            except Exception as error:
                 await ctx.send((f"Could not reload extension {extension}: "
-                                f"{e}"))
+                                f"{error}"))
 
         await ctx.send(f"Reloaded all modules.")
 
