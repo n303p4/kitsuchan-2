@@ -26,5 +26,4 @@ request. If the changes are judged to be acceptable, they'll be merged into the 
   unless you have a good enough reason for it.
 * Kitsuchan has a number of helper functions under the `k2.helpers` module. Use it when
   applicable, but try not to abuse it too heavily.
-* Your contributions must get an A grade on CodeClimate.
 * If you're unsure of how to do something, look around at the code, or ask!
