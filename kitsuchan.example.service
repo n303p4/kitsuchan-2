@@ -1,0 +1,15 @@
+[Unit]
+Description=Kitsuchan2
+After=multi-user.target
+
+[Service]
+WorkingDirectory=/home/username/kitsuchan-2
+User=username
+Group=usergroup
+ExecStart=/usr/bin/python3.6 /home/username/kitsuchan-2/kitsuchan.py -d
+Type=idle
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target
