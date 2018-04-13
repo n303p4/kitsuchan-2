@@ -50,7 +50,7 @@ class Utilities:
             game = discord.Game(name=game_name)
             await ctx.bot.change_presence(activity=game)
         else:
-            await ctx.bot.change_presence(game=None)
+            await ctx.bot.change_presence(activity=None)
         await ctx.send("Game set. :3")
 
     @commands.command(aliases=["clean"])

@@ -81,7 +81,12 @@ def _handle_manga(entry):
 class MyAnimeList:
     """MyAnimeList lookup commands."""
 
-    @commands.command()
+    @commands.group(invoke_without_command=True)
+    @commands.cooldown(6, 12)
+    async def mal(self, ctx):
+        await ctx.send("Please specify either `anime` or `manga`. Use `help` if you're unsure.")
+
+    @mal.command()
     @commands.cooldown(6, 12)
     async def manga(self, ctx, *, query):
         """Search for manga."""
@@ -97,7 +102,7 @@ class MyAnimeList:
         else:
             await ctx.send(result)
 
-    @commands.command()
+    @mal.command()
     @commands.cooldown(6, 12)
     async def anime(self, ctx, *, query):
         """Search for anime."""
