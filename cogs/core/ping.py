@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-import datetime
-
 from discord.ext import commands
 
 
@@ -12,9 +10,8 @@ class Ping:
     @commands.cooldown(6, 12)
     async def ping(self, ctx):
         """Ping the bot."""
-        pingtime = int(round((datetime.datetime.utcnow() -
-                              ctx.message.created_at).total_seconds() * 1000, 0))
-        message = f":ping_pong: {pingtime} ms!"
+        current_shard_latency = ctx.bot.latencies[ctx.guild.shard_id]
+        message = f"Current shard latency: {round(current_shard_latency[1]*1000, 2)} ms :fox:"
         await ctx.send(message)
 
 
