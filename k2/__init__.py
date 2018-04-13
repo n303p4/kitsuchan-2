@@ -4,5 +4,5 @@
 description = ("This is a running instance of Kitsuchan 2, an open-source, modular Discord bot "
                "made with ♥ and surprisingly little ☕.")
 url = "https://github.com/n303p4/kitsuchan-2"
-version_info = (2, 1, 1, "r", "Gray")
+version_info = (2, 1, 2, "r", "Gray")
 version = '{0}.{1}.{2}{3} "{4}"'.format(*version_info)
