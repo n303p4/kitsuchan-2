@@ -27,10 +27,10 @@ async def search_wikipedia(session, url):
     results = []
     for index in range(0, min(3, len(response_content[1]))):
         result = {
-                     "title": response_content[1][index],
-                     "description": response_content[2][index],
-                     "url": response_content[3][index]
-                 }
+            "title": response_content[1][index],
+            "description": response_content[2][index],
+            "url": response_content[3][index]
+        }
         results.append(result)
     return results
 
@@ -47,7 +47,7 @@ class Wikipedia:
         """
         url = generate_search_url_wikipedia(query)
         results = await search_wikipedia(ctx.bot.session, url)
-        if isinstance(results, dict):
+        if isinstance(results, list):
             embed = discord.Embed()
             for result in results:
                 description = f"{result['url']}\n{result['description']}"
