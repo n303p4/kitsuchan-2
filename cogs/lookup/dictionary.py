@@ -5,12 +5,57 @@
 import re
 import urllib.parse
 
+import async_timeout
 import discord
 from discord.ext import commands
 
 BASE_URL_OWL_API = "https://owlbot.info/api/v1/dictionary/{0}{1}"
-
 MAX_NUM_RESULTS = 5
+
+
+def generate_search_url_owlbot(word):
+    """Given a word, generate an OwlBot API search URL."""
+    word = word.lower()
+    params = "?{0}".format(urllib.parse.urlencode({"format": "json"}))
+    url = BASE_URL_OWL_API.format(word, params)
+    return url
+
+
+async def search_owlbot(session, url):
+    """Given a ClientSession and URL, search OwlBot."""
+    async with async_timeout.timeout(10):
+        async with session.get(url) as response:
+            if response.status == 200:
+                response_content = await response.json()
+                if not response_content:
+                    return "No results found for that word."
+            else:
+                return "Couldn't reach OwlBot. x.x"
+
+    num_results_to_display = min(MAX_NUM_RESULTS, len(response_content))
+    results = []
+
+    for index in range(0, num_results_to_display):
+        response_result = response_content[index]
+        definition = response_result.get('defenition')
+        description = re.sub("<.*?>|\u00E2|\u0080|\u0090", "",
+                             definition.capitalize())
+        example = response_result.get('example')
+
+        if example:
+            example = re.sub("<.*?>|\u00E2|\u0080|\u0090", "",
+                             example.capitalize())
+            example = f"*{example}*"
+            description = f"{description}\nExample: {example}"
+
+        result = {
+            "type": response_result["type"],
+            "description": description
+        }
+
+        results.append(result)
+
+    return results
 
 
 class Dictionary:
@@ -26,42 +71,18 @@ class Dictionary:
         * define dog
         * define fox
         """
-        word = word.lower()
-        params = "?{0}".format(urllib.parse.urlencode({"format": "json"}))
-        url = BASE_URL_OWL_API.format(word, params)
-        async with ctx.bot.session.get(url) as response:
-            if response.status == 200:
-                data = await response.json()
+        url = generate_search_url_owlbot(word)
+        results = await search_owlbot(ctx.bot.session, url)
 
-                if not data:
-                    await ctx.send("No results found for that word.")
-                    return
+        if isinstance(results, list):
+            embed = discord.Embed(title=word)
+            embed.url = BASE_URL_OWL_API.format(word, "")
 
-                embed = discord.Embed(title=word)
-                embed.url = BASE_URL_OWL_API.format(word, "")
+            for result in results:
+                embed.add_field(name=result["type"], value=result["description"])
 
-                results_to_display = min(MAX_NUM_RESULTS, len(data))
-
-                for index in range(0, results_to_display):
-                    result = data[index]
-                    definition = result.get('defenition')
-                    description = re.sub("<.*?>|\u00E2|\u0080|\u0090", "",
-                                         definition.capitalize())
-                    example = result.get('example')
-                    if example:
-                        example = re.sub("<.*?>|\u00E2|\u0080|\u0090", "",
-                                         example.capitalize())
-                        example = f"*{example}*"
-                        description = f"{description}\nExample: {example}"
-                    embed.add_field(name=result["type"], value=description)
-
-                embed.set_footer(text=("Powered by OwlBot | "
-                                       f"Showing {results_to_display} of {len(data)} results."))
-
-                await ctx.send(embed=embed)
-            else:
-                message = "Connection failed, or that isn't a word. :<"
-                await ctx.send(message)
+            embed.set_footer(text="Powered by OwlBot")
+            await ctx.send(embed=embed)
 
 
 def setup(bot):
