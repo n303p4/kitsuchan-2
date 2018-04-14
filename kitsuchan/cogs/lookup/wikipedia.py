@@ -10,6 +10,31 @@ from discord.ext import commands
 BASE_URL_WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php?{0}"
 
 
+def generate_search_url_wikipedia(query):
+    params = urllib.parse.urlencode({"action": "opensearch", "search": query})
+    url = BASE_URL_WIKIPEDIA_API.format(params)
+    return url
+
+
+async def search_wikipedia(session, url):
+    async with session.get(url) as response:
+        if response.status == 200:
+            response_content = await response.json()
+        else:
+            return "Couldn't reach Wikipedia. x.x"
+    if not response_content[1]:
+        return "No results found. :<"
+    results = []
+    for index in range(0, min(3, len(response_content[1]))):
+        result = {
+                     "title": response_content[1][index],
+                     "description": response_content[2][index],
+                     "url": response_content[3][index]
+                 }
+        results.append(result)
+    return results
+
+
 class Wikipedia:
     """Wikipedia command."""
 
@@ -20,22 +45,16 @@ class Wikipedia:
 
         * query - A string to be used in the search criteria.
         """
-        params = urllib.parse.urlencode({"action": "opensearch", "search": query})
-        url = BASE_URL_WIKIPEDIA_API.format(params)
-        async with ctx.bot.session.get(url) as response:
-            if response.status == 200:
-                data = await response.json()
-                if not data[1]:
-                    await ctx.send("No results found. :<")
-                    return
-                embed = discord.Embed()
-                for index in range(0, min(3, len(data[1]))):
-                    description = f"{data[3][index]}\n{data[2][index]}"
-                    embed.add_field(name=data[1][index], value=description, inline=False)
-                await ctx.send(embed=embed)
-            else:
-                message = "Couldn't reach Wikipedia. x.x"
-                await ctx.send(message)
+        url = generate_search_url_wikipedia(query)
+        results = await search_wikipedia(ctx.bot.session, url)
+        if isinstance(results, dict):
+            embed = discord.Embed()
+            for result in results:
+                description = f"{result['url']}\n{result['description']}"
+                embed.add_field(name=result['title'], value=description, inline=False)
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send(results)
 
 
 def setup(bot):
