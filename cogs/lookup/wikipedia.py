@@ -24,11 +24,13 @@ async def search_wikipedia(session, url):
             return "Couldn't reach Wikipedia. x.x"
     if not response_content[1]:
         return "No results found. :<"
+
     return response_content
 
 
 def generate_parsed_results_wikipedia(response_content):
     results = []
+
     for index in range(0, min(3, len(response_content[1]))):
         result = {
             "title": response_content[1][index],
@@ -36,6 +38,7 @@ def generate_parsed_results_wikipedia(response_content):
             "url": response_content[3][index]
         }
         results.append(result)
+
     return results
 
 
