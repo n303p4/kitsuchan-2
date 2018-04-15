@@ -29,8 +29,6 @@ async def search(session, url):
         async with session.get(url) as response:
             if response.status == 200:
                 response_content = await response.json()
-                if not response_content:
-                    raise WebAPINoResultsFound(message="No results found for that word.")
             else:
                 raise WebAPIUnreachable(service="OwlBot")
 
@@ -40,6 +38,9 @@ async def search(session, url):
 def generate_parsed_results(response_content):
     """Given response content from OwlBot, generate a list of parsed results."""
     try:
+        if not response_content:
+            raise WebAPINoResultsFound(message="No results found for that word.")
+
         num_results_to_display = min(MAX_NUM_RESULTS, len(response_content))
         results = []
 

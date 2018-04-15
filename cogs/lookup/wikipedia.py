@@ -30,15 +30,15 @@ async def search(session, url):
             else:
                 raise WebAPIUnreachable(service="Wikipedia")
 
-    if not response_content[1]:
-        raise WebAPINoResultsFound(message="No results found.")
-
     return response_content
 
 
 def generate_parsed_results(response_content):
     """Given response content from Wikipedia, parse content into a more easily readable form."""
     try:
+        if not response_content[1]:
+            raise WebAPINoResultsFound(message="No results found.")
+
         results = []
 
         for index in range(0, min(3, len(response_content[1]))):

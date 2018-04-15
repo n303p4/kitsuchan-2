@@ -27,8 +27,6 @@ async def search(session, url):
         async with session.get(url) as response:
             if response.status == 200:
                 response_content = await response.json()
-                if not response_content.get("data"):
-                    raise WebAPINoResultsFound(message="No result found.")
             else:
                 raise WebAPIUnreachable(service="jisho.org")
 
@@ -38,6 +36,9 @@ async def search(session, url):
 def generate_parsed_result(response_content):
     """Given response content from jisho.org, parse content into a more easily readable form."""
     try:
+        if not response_content.get("data"):
+            raise WebAPINoResultsFound(message="No result found.")
+
         japanese = response_content["data"][0]["japanese"][0]
         sense = response_content["data"][0]["senses"][0]
         english_string = ", ".join(sense["english_definitions"])
