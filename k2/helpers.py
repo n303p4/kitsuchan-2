@@ -5,11 +5,26 @@
 
 import asyncio
 
+import async_timeout
 import discord
 from discord.ext import commands
 
+from k2.exceptions import WebAPIUnreachable
+
 memberconverter = commands.MemberConverter()
 roleconverter = commands.RoleConverter()
+
+
+async def query_web_api(session, url, *, timeout: int = 10, service: str = None, params={}):
+    """Given a ClientSession and URL, query the URL and return its response content as a JSON."""
+    async with async_timeout.timeout(timeout):
+        async with session.get(url, params=params) as response:
+            if response.status == 200:
+                response_content = await response.json()
+            else:
+                raise WebAPIUnreachable(service=service)
+
+    return response_content
 
 
 async def yes_no(ctx: commands.Context,

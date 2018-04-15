@@ -5,11 +5,10 @@
 Ported from Oxylibrium's Nestbot.
 """
 
-import async_timeout
 import discord
 from discord.ext import commands
 
-from k2.exceptions import WebAPIUnreachable
+from k2.helpers import query_web_api
 
 BASE_URL_KITSUIO = "https://kitsu.io/api/edge/{0}"
 FIELDS = {
@@ -30,17 +29,6 @@ def generate_search_url(request_type):
     return url
 
 
-async def search(session, url, params):
-    async with async_timeout.timeout(10):
-        async with session.get(url, params=params) as response:
-            if response.status == 200:
-                response_content = await response.json(content_type="application/vnd.api+json")
-            else:
-                raise WebAPIUnreachable(service="kitsu.io")
-
-    return response_content
-
-
 class KitsuIO:
     """Cog that handles kitsu.io queries."""
 
@@ -55,7 +43,8 @@ class KitsuIO:
             "page[limit]": 1
         }
 
-        response_content = await search(ctx.bot.session, url, params)
+        response_content = await query_web_api(ctx.bot.session, url, service="kitsu.io",
+                                               params=params)
 
         if response_content.get("meta", {}).get("count"):
             attributes = response_content["data"][0]["attributes"]

@@ -4,11 +4,11 @@
 
 import urllib.parse
 
-import async_timeout
 import discord
 from discord.ext import commands
 
-from k2.exceptions import WebAPIInvalidResponse, WebAPINoResultsFound, WebAPIUnreachable
+from k2.helpers import query_web_api
+from k2.exceptions import WebAPIInvalidResponse, WebAPINoResultsFound
 
 BASE_URL_JISHO_API = "http://jisho.org/api/v1/search/words?{0}"
 
@@ -18,19 +18,6 @@ def generate_search_url(query):
     params = urllib.parse.urlencode({"keyword": query})
     url = BASE_URL_JISHO_API.format(params)
     return url
-
-
-async def search(session, url):
-    """Given a ClientSession and URL, search jisho.org and return the response content as a JSON.
-    """
-    async with async_timeout.timeout(10):
-        async with session.get(url) as response:
-            if response.status == 200:
-                response_content = await response.json()
-            else:
-                raise WebAPIUnreachable(service="jisho.org")
-
-    return response_content
 
 
 def generate_parsed_result(response_content):
@@ -69,7 +56,7 @@ class Jisho:
         query = f"{query} {' '.join(args)}"
 
         url = generate_search_url(query)
-        response_content = await search(ctx.bot.session, url)
+        response_content = await query_web_api(ctx.bot.session, url, service="jisho.org")
         result = generate_parsed_result(response_content)
 
         embed = discord.Embed()

@@ -4,11 +4,11 @@
 
 import urllib.parse
 
-import async_timeout
 import discord
 from discord.ext import commands
 
-from k2.exceptions import WebAPIInvalidResponse, WebAPINoResultsFound, WebAPIUnreachable
+from k2.helpers import query_web_api
+from k2.exceptions import WebAPIInvalidResponse, WebAPINoResultsFound
 
 BASE_URL_WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php?{0}"
 
@@ -18,19 +18,6 @@ def generate_search_url(query):
     params = urllib.parse.urlencode({"action": "opensearch", "search": query})
     url = BASE_URL_WIKIPEDIA_API.format(params)
     return url
-
-
-async def search(session, url):
-    """Given a ClientSession and URL, search Wikipedia and return the response content as a JSON.
-    """
-    async with async_timeout.timeout(10):
-        async with session.get(url) as response:
-            if response.status == 200:
-                response_content = await response.json()
-            else:
-                raise WebAPIUnreachable(service="Wikipedia")
-
-    return response_content
 
 
 def generate_parsed_results(response_content):
@@ -66,7 +53,7 @@ class Wikipedia:
         * query - A string to be used in the search criteria.
         """
         url = generate_search_url(query)
-        response_content = await search(ctx.bot.session, url)
+        response_content = await query_web_api(ctx.bot.session, url, service="Wikipedia")
         results = generate_parsed_results(response_content)
 
         embed = discord.Embed()
