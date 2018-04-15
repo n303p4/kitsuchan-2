@@ -9,6 +9,8 @@ import async_timeout
 import discord
 from discord.ext import commands
 
+from k2.exceptions import WebAPINoResultsFound, WebAPIUnreachable
+
 BASE_URL_OWL_API = "https://owlbot.info/api/v1/dictionary/{0}{1}"
 MAX_NUM_RESULTS = 5
 
@@ -28,9 +30,9 @@ async def search(session, url):
             if response.status == 200:
                 response_content = await response.json()
                 if not response_content:
-                    return "No results found for that word."
+                    raise WebAPINoResultsFound(message="No results found for that word.")
             else:
-                return "Couldn't reach OwlBot. x.x"
+                raise WebAPIUnreachable(service="OwlBot")
 
     return response_content
 

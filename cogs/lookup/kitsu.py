@@ -8,6 +8,8 @@ Ported from Oxylibrium's Nestbot.
 import discord
 from discord.ext import commands
 
+from k2.exceptions import WebAPIUnreachable
+
 BASE_URL_KITSUIO = "https://kitsu.io/api/edge/{0}"
 FIELDS = {
     "Score": "averageRating",
@@ -32,7 +34,7 @@ async def search(session, url, params):
         if response.status == 200:
             response_content = await response.json(content_type="application/vnd.api+json")
         else:
-            return "Could not reach kitsu.io x.x"
+            raise WebAPIUnreachable(service="kitsu.io")
 
     return response_content
 

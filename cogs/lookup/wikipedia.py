@@ -7,28 +7,34 @@ import urllib.parse
 import discord
 from discord.ext import commands
 
+from k2.exceptions import WebAPINoResultsFound, WebAPIUnreachable
+
 BASE_URL_WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php?{0}"
 
 
 def generate_search_url(query):
+    """Given a query, generate a search URL for Wikipedia's API."""
     params = urllib.parse.urlencode({"action": "opensearch", "search": query})
     url = BASE_URL_WIKIPEDIA_API.format(params)
     return url
 
 
 async def search(session, url):
+    """Given a ClientSession and URL, search Wikipedia and return the response content as a JSON.
+    """
     async with session.get(url) as response:
         if response.status == 200:
             response_content = await response.json()
         else:
-            return "Couldn't reach Wikipedia. x.x"
+            raise WebAPIUnreachable(service="Wikipedia")
     if not response_content[1]:
-        return "No results found. :<"
+        raise WebAPINoResultsFound(message="No results found.")
 
     return response_content
 
 
 def generate_parsed_results(response_content):
+    """Given response content from Wikipedia, parse content into a more easily readable form."""
     results = []
 
     for index in range(0, min(3, len(response_content[1]))):
