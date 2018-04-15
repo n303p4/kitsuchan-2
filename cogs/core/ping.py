@@ -10,9 +10,8 @@ class Ping:
     @commands.cooldown(6, 12)
     async def ping(self, ctx):
         """Ping the bot."""
-        current_shard_latency = ctx.bot.latencies[ctx.guild.shard_id]
-        message = f"Current shard latency: {round(current_shard_latency[1]*1000, 2)} ms :fox:"
-        await ctx.send(message)
+        msg = f"Current latency: {round(ctx.bot.latency*1000, 2)} ms :fox:"
+        await ctx.send(msg)
 
 
 def setup(bot):
