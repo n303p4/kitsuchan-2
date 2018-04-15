@@ -16,29 +16,45 @@ FIELDS = {
 }
 
 
+def filter_request_type(request_type):
+    if request_type not in ("anime", "manga"):
+        request_type = "anime"
+    return request_type
+
+
+def generate_search_url_kitsuio(request_type):
+    url = BASE_URL_KITSUIO.format(request_type)
+    return url
+
+
+async def search_kitsuio(session, url, params):
+    async with session.get(url, params=params) as response:
+        if response.status == 200:
+            response_content = await response.json(content_type="application/vnd.api+json")
+        else:
+            return "Could not reach kitsu.io x.x"
+
+    return response_content
+
+
 class KitsuIO:
     """Cog that handles kitsu.io queries."""
 
     @commands.command(aliases=["manga", "anime"])
     async def kitsu(self, ctx, *, query: str):
         """Get manga or anime from kitsu.io"""
-        request_type = "anime" if ctx.invoked_with == "kitsu" else ctx.invoked_with
-        url = BASE_URL_KITSUIO.format(request_type)
+        request_type = filter_request_type(ctx.invoked_with)
+        url = generate_search_url_kitsuio(request_type)
 
         params = {
             "filter[text]": query,
             "page[limit]": 1
         }
 
-        async with ctx.bot.session.get(url, params=params) as response:
-            if response.status == 200:
-                data = await response.json(content_type="application/vnd.api+json")
-            else:
-                await ctx.send("Could not reach kitsu.io x.x")
-                return
+        response_content = await search_kitsuio(ctx.bot.session, url, params)
 
-        if data.get("meta", {}).get("count"):
-            attributes = data["data"][0]["attributes"]
+        if isinstance(response_content, dict) and response_content.get("meta", {}).get("count"):
+            attributes = response_content["data"][0]["attributes"]
             link = f"https://kitsu.io/{request_type}/{attributes['slug']}"
             titles = (f"{attributes['titles'].get('en', '???')} - "
                       f"{attributes['titles'].get('en_jp', '???')}")
