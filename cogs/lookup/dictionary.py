@@ -81,6 +81,7 @@ class Dictionary:
         url = generate_search_url(word)
         response_content = await search(ctx.bot.session, url)
         results = generate_parsed_results(response_content)
+
         embed = discord.Embed(title=word)
         embed.url = BASE_URL_OWL_API.format(word, "")
 

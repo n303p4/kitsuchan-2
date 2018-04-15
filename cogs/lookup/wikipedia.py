@@ -64,6 +64,7 @@ class Wikipedia:
         url = generate_search_url(query)
         response_content = await search(ctx.bot.session, url)
         results = generate_parsed_results(response_content)
+
         embed = discord.Embed()
         for result in results:
             description = f"{result['url']}\n{result['description']}"
