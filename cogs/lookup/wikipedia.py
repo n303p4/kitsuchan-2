@@ -63,15 +63,12 @@ class Wikipedia:
         """
         url = generate_search_url(query)
         response_content = await search(ctx.bot.session, url)
-        if isinstance(response_content, list):
-            results = generate_parsed_results(response_content)
-            embed = discord.Embed()
-            for result in results:
-                description = f"{result['url']}\n{result['description']}"
-                embed.add_field(name=result['title'], value=description, inline=False)
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send(response_content)
+        results = generate_parsed_results(response_content)
+        embed = discord.Embed()
+        for result in results:
+            description = f"{result['url']}\n{result['description']}"
+            embed.add_field(name=result['title'], value=description, inline=False)
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

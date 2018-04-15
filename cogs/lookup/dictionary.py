@@ -80,18 +80,15 @@ class Dictionary:
         """
         url = generate_search_url(word)
         response_content = await search(ctx.bot.session, url)
-        if isinstance(response_content, list):
-            results = generate_parsed_results(response_content)
-            embed = discord.Embed(title=word)
-            embed.url = BASE_URL_OWL_API.format(word, "")
+        results = generate_parsed_results(response_content)
+        embed = discord.Embed(title=word)
+        embed.url = BASE_URL_OWL_API.format(word, "")
 
-            for result in results:
-                embed.add_field(name=result["type"], value=result["description"])
+        for result in results:
+            embed.add_field(name=result["type"], value=result["description"])
 
-            embed.set_footer(text="Powered by OwlBot")
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send(response_content)
+        embed.set_footer(text="Powered by OwlBot")
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

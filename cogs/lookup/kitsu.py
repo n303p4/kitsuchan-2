@@ -57,7 +57,7 @@ class KitsuIO:
 
         response_content = await search(ctx.bot.session, url, params)
 
-        if isinstance(response_content, dict) and response_content.get("meta", {}).get("count"):
+        if response_content.get("meta", {}).get("count"):
             attributes = response_content["data"][0]["attributes"]
             link = f"https://kitsu.io/{request_type}/{attributes['slug']}"
             titles = (f"{attributes['titles'].get('en', '???')} - "
