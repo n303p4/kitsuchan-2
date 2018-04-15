@@ -8,7 +8,7 @@ import async_timeout
 import discord
 from discord.ext import commands
 
-from k2.exceptions import WebAPINoResultsFound, WebAPIUnreachable
+from k2.exceptions import WebAPIInvalidResponse, WebAPINoResultsFound, WebAPIUnreachable
 
 BASE_URL_WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php?{0}"
 
@@ -38,17 +38,21 @@ async def search(session, url):
 
 def generate_parsed_results(response_content):
     """Given response content from Wikipedia, parse content into a more easily readable form."""
-    results = []
+    try:
+        results = []
 
-    for index in range(0, min(3, len(response_content[1]))):
-        result = {
-            "title": response_content[1][index],
-            "description": response_content[2][index],
-            "url": response_content[3][index]
-        }
-        results.append(result)
+        for index in range(0, min(3, len(response_content[1]))):
+            result = {
+                "title": response_content[1][index],
+                "description": response_content[2][index],
+                "url": response_content[3][index]
+            }
+            results.append(result)
 
-    return results
+        return results
+
+    except Exception:
+        raise WebAPIInvalidResponse(service="Wikipedia")
 
 
 class Wikipedia:
@@ -69,6 +73,7 @@ class Wikipedia:
         for result in results:
             description = f"{result['url']}\n{result['description']}"
             embed.add_field(name=result['title'], value=description, inline=False)
+
         await ctx.send(embed=embed)
 
 

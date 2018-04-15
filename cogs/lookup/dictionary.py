@@ -9,7 +9,7 @@ import async_timeout
 import discord
 from discord.ext import commands
 
-from k2.exceptions import WebAPINoResultsFound, WebAPIUnreachable
+from k2.exceptions import WebAPIInvalidResponse, WebAPINoResultsFound, WebAPIUnreachable
 
 BASE_URL_OWL_API = "https://owlbot.info/api/v1/dictionary/{0}{1}"
 MAX_NUM_RESULTS = 5
@@ -39,30 +39,34 @@ async def search(session, url):
 
 def generate_parsed_results(response_content):
     """Given response content from OwlBot, generate a list of parsed results."""
-    num_results_to_display = min(MAX_NUM_RESULTS, len(response_content))
-    results = []
+    try:
+        num_results_to_display = min(MAX_NUM_RESULTS, len(response_content))
+        results = []
 
-    for index in range(0, num_results_to_display):
-        response_result = response_content[index]
-        definition = response_result.get('defenition')
-        description = re.sub("<.*?>|\u00E2|\u0080|\u0090", "",
-                             definition.capitalize())
-        example = response_result.get('example')
+        for index in range(0, num_results_to_display):
+            response_result = response_content[index]
+            definition = response_result.get('defenition')
+            description = re.sub("<.*?>|\u00E2|\u0080|\u0090", "",
+                                 definition.capitalize())
+            example = response_result.get('example')
 
-        if example:
-            example = re.sub("<.*?>|\u00E2|\u0080|\u0090", "",
-                             example.capitalize())
-            example = f"*{example}*"
-            description = f"{description}\nExample: {example}"
+            if example:
+                example = re.sub("<.*?>|\u00E2|\u0080|\u0090", "",
+                                 example.capitalize())
+                example = f"*{example}*"
+                description = f"{description}\nExample: {example}"
 
-        result = {
-            "type": response_result["type"],
-            "description": description
-        }
+            result = {
+                "type": response_result["type"],
+                "description": description
+            }
 
-        results.append(result)
+            results.append(result)
 
-    return results
+        return results
+
+    except Exception:
+        raise WebAPIInvalidResponse(service="OwlBot")
 
 
 class Dictionary:
