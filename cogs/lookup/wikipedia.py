@@ -10,13 +10,13 @@ from discord.ext import commands
 BASE_URL_WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php?{0}"
 
 
-def generate_search_url_wikipedia(query):
+def generate_search_url(query):
     params = urllib.parse.urlencode({"action": "opensearch", "search": query})
     url = BASE_URL_WIKIPEDIA_API.format(params)
     return url
 
 
-async def search_wikipedia(session, url):
+async def search(session, url):
     async with session.get(url) as response:
         if response.status == 200:
             response_content = await response.json()
@@ -28,7 +28,7 @@ async def search_wikipedia(session, url):
     return response_content
 
 
-def generate_parsed_results_wikipedia(response_content):
+def generate_parsed_results(response_content):
     results = []
 
     for index in range(0, min(3, len(response_content[1]))):
@@ -52,10 +52,10 @@ class Wikipedia:
 
         * query - A string to be used in the search criteria.
         """
-        url = generate_search_url_wikipedia(query)
-        response_content = await search_wikipedia(ctx.bot.session, url)
+        url = generate_search_url(query)
+        response_content = await search(ctx.bot.session, url)
         if isinstance(response_content, list):
-            results = generate_parsed_results_wikipedia(response_content)
+            results = generate_parsed_results(response_content)
             embed = discord.Embed()
             for result in results:
                 description = f"{result['url']}\n{result['description']}"

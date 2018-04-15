@@ -22,12 +22,12 @@ def filter_request_type(request_type):
     return request_type
 
 
-def generate_search_url_kitsuio(request_type):
+def generate_search_url(request_type):
     url = BASE_URL_KITSUIO.format(request_type)
     return url
 
 
-async def search_kitsuio(session, url, params):
+async def search(session, url, params):
     async with session.get(url, params=params) as response:
         if response.status == 200:
             response_content = await response.json(content_type="application/vnd.api+json")
@@ -44,14 +44,14 @@ class KitsuIO:
     async def kitsu(self, ctx, *, query: str):
         """Get manga or anime from kitsu.io"""
         request_type = filter_request_type(ctx.invoked_with)
-        url = generate_search_url_kitsuio(request_type)
+        url = generate_search_url(request_type)
 
         params = {
             "filter[text]": query,
             "page[limit]": 1
         }
 
-        response_content = await search_kitsuio(ctx.bot.session, url, params)
+        response_content = await search(ctx.bot.session, url, params)
 
         if isinstance(response_content, dict) and response_content.get("meta", {}).get("count"):
             attributes = response_content["data"][0]["attributes"]
