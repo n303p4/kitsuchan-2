@@ -5,6 +5,7 @@
 Ported from Oxylibrium's Nestbot.
 """
 
+import async_timeout
 import discord
 from discord.ext import commands
 
@@ -30,11 +31,12 @@ def generate_search_url(request_type):
 
 
 async def search(session, url, params):
-    async with session.get(url, params=params) as response:
-        if response.status == 200:
-            response_content = await response.json(content_type="application/vnd.api+json")
-        else:
-            raise WebAPIUnreachable(service="kitsu.io")
+    async with async_timeout.timeout(10):
+        async with session.get(url, params=params) as response:
+            if response.status == 200:
+                response_content = await response.json(content_type="application/vnd.api+json")
+            else:
+                raise WebAPIUnreachable(service="kitsu.io")
 
     return response_content
 

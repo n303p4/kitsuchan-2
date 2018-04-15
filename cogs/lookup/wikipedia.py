@@ -4,6 +4,7 @@
 
 import urllib.parse
 
+import async_timeout
 import discord
 from discord.ext import commands
 
@@ -22,11 +23,13 @@ def generate_search_url(query):
 async def search(session, url):
     """Given a ClientSession and URL, search Wikipedia and return the response content as a JSON.
     """
-    async with session.get(url) as response:
-        if response.status == 200:
-            response_content = await response.json()
-        else:
-            raise WebAPIUnreachable(service="Wikipedia")
+    async with async_timeout.timeout(10):
+        async with session.get(url) as response:
+            if response.status == 200:
+                response_content = await response.json()
+            else:
+                raise WebAPIUnreachable(service="Wikipedia")
+
     if not response_content[1]:
         raise WebAPINoResultsFound(message="No results found.")
 
