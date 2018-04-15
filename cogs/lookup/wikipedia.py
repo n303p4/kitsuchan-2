@@ -24,6 +24,10 @@ async def search_wikipedia(session, url):
             return "Couldn't reach Wikipedia. x.x"
     if not response_content[1]:
         return "No results found. :<"
+    return response_content
+
+
+def generate_parsed_results_wikipedia(response_content):
     results = []
     for index in range(0, min(3, len(response_content[1]))):
         result = {
@@ -46,15 +50,16 @@ class Wikipedia:
         * query - A string to be used in the search criteria.
         """
         url = generate_search_url_wikipedia(query)
-        results = await search_wikipedia(ctx.bot.session, url)
-        if isinstance(results, list):
+        response_content = await search_wikipedia(ctx.bot.session, url)
+        if isinstance(response_content, list):
+            results = generate_parsed_results_wikipedia(response_content)
             embed = discord.Embed()
             for result in results:
                 description = f"{result['url']}\n{result['description']}"
                 embed.add_field(name=result['title'], value=description, inline=False)
             await ctx.send(embed=embed)
         else:
-            await ctx.send(results)
+            await ctx.send(response_content)
 
 
 def setup(bot):

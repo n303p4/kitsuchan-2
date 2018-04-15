@@ -22,7 +22,7 @@ def generate_search_url_owlbot(word):
 
 
 async def search_owlbot(session, url):
-    """Given a ClientSession and URL, search OwlBot."""
+    """Given a ClientSession and URL, search OwlBot and return the response content."""
     async with async_timeout.timeout(10):
         async with session.get(url) as response:
             if response.status == 200:
@@ -32,6 +32,11 @@ async def search_owlbot(session, url):
             else:
                 return "Couldn't reach OwlBot. x.x"
 
+    return response_content
+
+
+def generate_parsed_results_owlbot(response_content):
+    """Given response content from OwlBot, generate a list of parsed results."""
     num_results_to_display = min(MAX_NUM_RESULTS, len(response_content))
     results = []
 
@@ -72,9 +77,9 @@ class Dictionary:
         * define fox
         """
         url = generate_search_url_owlbot(word)
-        results = await search_owlbot(ctx.bot.session, url)
-
-        if isinstance(results, list):
+        response_content = await search_owlbot(ctx.bot.session, url)
+        if isinstance(response_content, list):
+            results = generate_parsed_results_owlbot(response_content)
             embed = discord.Embed(title=word)
             embed.url = BASE_URL_OWL_API.format(word, "")
 
@@ -83,6 +88,8 @@ class Dictionary:
 
             embed.set_footer(text="Powered by OwlBot")
             await ctx.send(embed=embed)
+        else:
+            await ctx.send(response_content)
 
 
 def setup(bot):
