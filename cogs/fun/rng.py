@@ -19,14 +19,10 @@ MAX_DIE_SIZE = 2000
 systemrandom = random.SystemRandom()
 
 
-def generate_roll(die_count, die_size):
-    """Given a number of dice, and the number of sides per die, simulate a dice roll and return
-    a list of ints representing the outcome values.
-    """
-    roll_ = []
-    for times in range(0, die_count):
-        roll_.append(systemrandom.randint(1, die_size))
-    return roll_
+def trim_expressions(*expressions):
+    """Remove all expressions from a list that don't match D&D syntax."""
+    expressions = [e for e in expressions if REGEX_OBJECT_DND.fullmatch(e)]
+    return expressions
 
 
 def parse_roll(expression):
@@ -36,10 +32,14 @@ def parse_roll(expression):
     return roll_
 
 
-def trim_expressions(*expressions):
-    """Remove all expressions from a list that don't match D&D syntax."""
-    expressions = [e for e in expressions if REGEX_OBJECT_DND.fullmatch(e)]
-    return expressions
+def generate_roll(die_count, die_size):
+    """Given an amount of dice and the number of sides per die, simulate a dice roll and return
+    a list of ints representing the outcome values.
+    """
+    roll_ = []
+    for times in range(0, die_count):
+        roll_.append(systemrandom.randint(1, die_size))
+    return roll_
 
 
 def parse_rolls(*expressions, **kwargs):
