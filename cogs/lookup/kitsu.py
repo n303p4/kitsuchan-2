@@ -20,12 +20,14 @@ FIELDS = {
 
 
 def filter_request_type(request_type):
-    if request_type not in ("anime", "manga"):
-        request_type = "anime"
+    """Given an arbitrary string, generate a valid request type for kitsu.io."""
     return request_type
 
 
 def generate_search_url(request_type):
+    """Given a request type, generate a query URL for kitsu.io."""
+    if request_type not in ("anime", "manga"):
+        request_type = "anime"
     url = BASE_URL_KITSUIO.format(request_type)
     return url
 
@@ -45,6 +47,33 @@ async def search(session, url, params):
     return resp_content
 
 
+def generate_parsed_result(response_content, request_type):
+    """Parse response content from kitsu.io and return a dict."""
+    try:
+        attributes = response_content["data"][0]["attributes"]
+
+        result = {
+            "title_english": f"{attributes['titles'].get('en', '???')}",
+            "title_romaji": f"{attributes['titles'].get('en_jp', '???')}",
+            "url": f"https://kitsu.io/{request_type}/{attributes['slug']}",
+            "description": attributes.get("synopsis", "None"),
+            "fields": {}
+        }
+
+        for name, item in FIELDS.items():
+            result["fields"][name] = attributes.get(item, "N/A")
+
+        if attributes.get("endDate"):
+            result["fields"]["Finished"] = attributes["endDate"]
+
+        result["thumbnail"] = attributes.get("posterImage", {}).get("original")
+
+        return result
+
+    except Exception:
+        raise WebAPIInvalidResponse(service="kitsu.io")
+
+
 class KitsuIO:
     """Cog that handles kitsu.io queries."""
 
@@ -60,28 +89,20 @@ class KitsuIO:
         }
 
         response_content = await search(ctx.bot.session, url, params)
+        result = generate_parsed_result(response_content, request_type)
 
-        if response_content.get("meta", {}).get("count"):
-            attributes = response_content["data"][0]["attributes"]
-            link = f"https://kitsu.io/{request_type}/{attributes['slug']}"
-            titles = (f"{attributes['titles'].get('en', '???')} - "
-                      f"{attributes['titles'].get('en_jp', '???')}")
+        title = f"{result['title_english']} - {result['title_romaji']}"
+        url = result["url"]
+        description = result["description"]
 
-            embed = discord.Embed(title=titles,
-                                  url=link,
-                                  description=attributes.get("synopsis", "None"))
+        embed = discord.Embed(title=title, url=url, description=description)
 
-            for name, item in FIELDS.items():
-                embed.add_field(name=name, value=attributes.get(item, "N/A"))
+        for name, item in result["fields"].items():
+            embed.add_field(name=name, value=item)
 
-            if attributes.get("endDate"):
-                embed.add_field(name="Finished", value=attributes["endDate"])
-            try:
-                embed.set_thumbnail(url=attributes["posterImage"]["original"])
-            except KeyError:
-                pass
+        embed.set_thumbnail(url=result["thumbnail"])
 
-            await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
