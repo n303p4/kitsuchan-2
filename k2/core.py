@@ -7,6 +7,8 @@ import json
 import aiohttp
 from discord.ext import commands
 
+import k2
+
 
 class Bot(commands.AutoShardedBot):
     """A custom bot object that provides a configuration handler and an aiohttp ClientSession.
@@ -31,7 +33,8 @@ class Bot(commands.AutoShardedBot):
         super().__init__(*args, **kwargs)
         self.config = {}
         self.config_file = kwargs.get("config_file", "config.json")
-        self.session = aiohttp.ClientSession(loop=self.loop)
+        self.headers = {"User-Agent": f"Kitsuchan/{k2.version}"}
+        self.session = aiohttp.ClientSession(loop=self.loop, headers=self.headers)
 
     def load_config(self, filename: str = None):
         """Load config from a JSON file.
