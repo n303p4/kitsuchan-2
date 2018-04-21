@@ -30,41 +30,25 @@ class Evaluation:
         for page in paginator.pages:
             await ctx.send(page)
 
-    async def _geval(self, ctx, expression, type_=None):
-        """Evaluate an expression."""
-        try:
-            if type_ == "await":
-                output = await eval(expression)
-            elif type_ == "exec":
-                output = exec(expression)
-            else:
-                output = eval(expression)
-            output = str(output)
-        except Exception as error:
-            output = f"x.x An error has occurred: {error}"
-        paginator = commands.Paginator(prefix="```py", max_size=500)
-        for index in range(0, len(output), 490):
-            paginator.add_line(output[index:index+490])
+    @commands.command(name="exec")
+    @commands.is_owner()
+    async def _exec(self, ctx, *, code):
+        """Execute arbitrary Python code. Bot owner only."""
+        if code.startswith("```py\n"):
+            code = code[6:]
+        elif code.startswith("```"):
+            code = code[3:]
+
+        if code.endswith("```"):
+            code = code[:-3]
+
+        variables = {"ctx": ctx}
+        exec(code, {}, variables)
+        paginator = commands.Paginator()
+        for key, value in variables.items():
+            paginator.add_line(f"{type(value).__name__} {key}: {value}")
         for page in paginator.pages:
             await ctx.send(page)
-
-    @commands.group(name="eval", invoke_without_command=True)
-    @commands.is_owner()
-    async def _eval(self, ctx, *, expression):
-        """Evaluate a Python expression. Bot owner only."""
-        await self._geval(ctx, expression)
-
-    @_eval.command(name="await")
-    @commands.is_owner()
-    async def _await(self, ctx, *, expression):
-        """Evaluate a Python expression as an await. Bot owner only."""
-        await self._geval(ctx, expression, type_="await")
-
-    @commands.group(name="exec", invoke_without_command=True)
-    @commands.is_owner()
-    async def _exec(self, ctx, *, expression):
-        """Execute a Python expression. Bot owner only."""
-        await self._geval(ctx, expression, type_="exec")
 
 
 def setup(bot):

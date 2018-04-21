@@ -33,7 +33,7 @@ class Bot(commands.AutoShardedBot):
         super().__init__(*args, **kwargs)
         self.config = {}
         self.config_file = kwargs.get("config_file", "config.json")
-        self.headers = {"User-Agent": f"Kitsuchan/{k2.version}"}
+        self.headers = {"User-Agent": f"Kitsuchan/{k2.version_number}"}
         self.session = aiohttp.ClientSession(loop=self.loop, headers=self.headers)
 
     def load_config(self, filename: str = None):
