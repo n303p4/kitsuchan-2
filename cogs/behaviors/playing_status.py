@@ -59,7 +59,7 @@ class PlayingStatus:
             status = self.get_next_status()
             game = discord.Game(name=status)
             await self.bot.change_presence(status=discord.Status.online, activity=game)
-            await asyncio.sleep(10)
+            await asyncio.sleep(30)
         await self.bot.change_presence(status=discord.Status.online, activity=None)
 
 
