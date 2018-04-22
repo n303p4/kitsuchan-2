@@ -1,5 +1,5 @@
 -e git+https://github.com/Rapptz/discord.py@rewrite#egg=discord
--e git+https://github.com/n303p4/owoe#egg=owoe
+requests
 webcolors
 beautifulsoup4
 html2text

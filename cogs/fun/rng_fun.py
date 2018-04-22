@@ -40,7 +40,7 @@ class RandomFun:
         message = "Command disabled. Please read this: http://random.cat/help.html"
         await ctx.send(message)
 
-    @commands.command(aliases=["kemonomimi", "catgirl", "kneko", "nekomimi",
+    @commands.command(aliases=["catgirl", "kneko", "nekomimi",
                                "foxgirl" "kitsune", "kitsunemimi"])
     @commands.cooldown(6, 12)
     async def kemono(self, ctx):

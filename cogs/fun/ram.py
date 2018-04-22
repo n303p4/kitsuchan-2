@@ -3,113 +3,76 @@
 
 """Contains a cog for various weeb reaction commands."""
 
-import asyncio
-import random
+import urllib.parse
 
+import async_timeout
+import requests
 import discord
 from discord.ext import commands
-import owoe
 
-from k2 import helpers
+from k2.exceptions import WebAPIInvalidResponse, WebAPIUnreachable
 
-systemrandom = random.SystemRandom()
-
-
-async def _generate_message(ctx, kind: str = None, user: str = None):
-    """Generate a message based on the user."""
-    user = await helpers.member_by_substring(ctx, user)
-    if not kind or not user:
-        message = ""
-    elif user.id == ctx.bot.user.id:
-        message = f"Aw, thank you. Here, have one back. :3"
-    elif user.id == ctx.author.id:
-        message = systemrandom.choice(("Okay. :3",
-                                       f"Sorry to see you're alone, have a {kind} anyway. :<",
-                                       f"I'll {kind} your face alright. :3",
-                                       ":<"))
-    else:
-        message = f"**{user.display_name}**, you got a {kind} from **{ctx.author.display_name}!**"
-    return message
+BASE_URL_TYPES = "https://api.weeb.sh/images/types"
+BASE_URL_RANDOM = "https://api.weeb.sh/images/random?{0}"
 
 
-class Ram:
-    """Weeb reaction commands."""
+def get_types(headers):
+    """Get image types from weeb.sh using requests."""
+    response = requests.get(BASE_URL_TYPES, headers=headers)
+    if response.status_code == 200:
+        try:
+            response_content = response.json()
+            return response_content["types"]
+        except Exception:
+            raise WebAPIInvalidResponse(service="weeb.sh")
+    raise WebAPIUnreachable(service="weeb.sh")
 
-    def __init__(self, bot):
-        """A weeb cog with reaction commands."""
-        self.bot = bot
-        self.owoe = owoe.Owoe(self.bot.config["weebsh_token"], self.bot.session)
 
-        self.bot.loop.create_task(self._finish_init())
+def generate_image_query_url(image_type):
+    """Generate an image query URL for weeb.sh"""
+    params = urllib.parse.urlencode({"type": image_type})
+    url = BASE_URL_RANDOM.format(params)
+    return url
 
-    async def _finish_init(self):
-        """Notice that this does *not* properly handle HTTP status codes."""
-        status_types = await self.owoe.update_image_types()
-        status_tags = await self.owoe.update_image_tags()
-        if status_types or status_tags:
-            await asyncio.sleep(30)
-            await self._finish_init()
-        else:
-            await self._build_commands()
 
-    async def _build_commands(self):
-        for key in self.owoe.types:
-
-            # Avoid duplicate commands by removing them.
-            if key in self.bot.all_commands.keys():
-                self.bot.remove_command(key)
-
-            helptext = f"Fetch random {key} image from weeb.sh."
-
-            async def callback(self, ctx, *tags):
-                tags = list(tags)
-                for tag in tags:
-                    if tag not in self.owoe.tags:
-                        tags.remove(tag)
-                url_image = await self.owoe.random_image(type_=ctx.command.name, tags=tags)
-                if isinstance(url_image, str):
-                    embed = discord.Embed()
-                    embed.set_image(url=url_image)
-                    embed.set_footer(text="Powered by weeb.sh")
-                    await ctx.send(embed=embed)
-                    return
-                await ctx.send("No image matching your criteria was found.")
-
-            # Ew, gross.
-            command = commands.command(name=key, help=helptext)(callback)
-            command = commands.cooldown(6, 12, commands.BucketType.channel)(command)
-            command.instance = self
-            setattr(self, key, command)
-            self.bot.add_command(command)
-
-    @commands.command()
-    @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def weebtypes(self, ctx):
-        """List all available weeb.sh types."""
-        embed = discord.Embed(title="List of valid weeb.sh types")
-        embed.description = ", ".join(self.owoe.types)[:2000]
-        await ctx.send(embed=embed)
-
-    @commands.command(aliases=["wt", "weebtag"])
-    @commands.cooldown(6, 12, commands.BucketType.channel)
-    async def weebtags(self, ctx, *set_of_tags):
-        """List all available weeb.sh tags, or fetch an image by tag."""
-        if not set_of_tags:
-            embed = discord.Embed(title="List of valid weeb.sh tags")
-            embed.description = ", ".join(self.owoe.tags)[:2000]
-            embed.set_footer(text="You can use this command to fetch images by tags.")
-            await ctx.send(embed=embed)
-        else:
-            url_image = await self.owoe.random_image(tags=set_of_tags)
-            if isinstance(url_image, str):
-                embed = discord.Embed()
-                embed.set_image(url=url_image)
-                embed.set_footer(text="Powered by weeb.sh")
-                await ctx.send(embed=embed)
-                return
-            await ctx.send("No image matching your criteria was found.")
+async def random_image(session, url, headers):
+    """Given a ClientSession and URL, query the URL and return its response content as a JSON."""
+    async with async_timeout.timeout(10):
+        async with session.get(url, headers=headers) as response:
+            if response.status == 200:
+                try:
+                    response_content = await response.json()
+                    return response_content
+                except Exception:
+                    raise WebAPIInvalidResponse(service="weeb.sh")
+            raise WebAPIUnreachable(service="weeb.sh")
 
 
 def setup(bot):
-    """Setup function for reaction images."""
-    bot.add_cog(Ram(bot))
+    """Set up the extension."""
+    token = bot.config["weebsh_token"]
+    headers = {"Authorization": f"Wolke {token}", **bot.headers}
+    image_types = get_types(headers)
+
+    class WeebSH:
+        """Cog for interfacing weeb.sh"""
+
+        @commands.command(aliases=image_types)
+        async def weeb(self, ctx, *, image_type: str = None):
+            """Fetch a random weeb.sh image. Can be used directly as an alias."""
+            if not image_type:
+                image_type = ctx.invoked_with
+            url = generate_image_query_url(image_type)
+            try:
+                response_content = await random_image(ctx.bot.session, url, headers)
+            except WebAPIUnreachable:
+                message = f"Invalid type supplied. Valid types are: ```{', '.join(image_types)}```"
+                raise commands.UserInputError(message)
+            else:
+                embed = discord.Embed(title="Image link")
+                embed.url = response_content["url"]
+                embed.set_image(url=response_content["url"])
+                embed.set_footer(text="Powered by weeb.sh")
+                await ctx.send(embed=embed)
+
+    bot.add_cog(WeebSH())
