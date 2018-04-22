@@ -28,7 +28,7 @@ logger.setLevel(logging.INFO)
 
 DIRECTORY_PATH = os.path.dirname(os.path.realpath(__file__))
 
-bot = core.Bot(command_prefix="", pm_help=True, config_file="config.json")
+bot = core.Bot(command_prefix="", pm_help=False, config_file="config.json")
 
 
 if __name__ == "__main__":
