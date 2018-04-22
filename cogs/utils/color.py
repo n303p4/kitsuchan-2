@@ -10,7 +10,7 @@ import discord
 from discord.ext import commands
 import webcolors
 
-BASE_URL_COLOR_API = "https://api.thegathering.xyz/color/?color={0}"
+BASE_URL_COLOR_API = "http://www.colourlovers.com/img/{0}/88/88/"
 BASE_URL_TINEYE_MULTICOLR = "https://labs.tineye.com/multicolr/#colors={0};weights=100"
 BASE_URL_COLOR_HEX = "http://www.color-hex.com/color/{0}"
 
@@ -76,7 +76,7 @@ class Color:
         embed.add_field(name="Notes",
                         value="* These values may be slightly wrong due to floating point errors.",
                         inline=False)
-        embed.set_footer(text="Thumbnail provided by AlexFlipnote's API")
+        embed.set_footer(text="Thumbnail provided by the COLOURlovers API")
         await ctx.send(embed=embed)
 
 
